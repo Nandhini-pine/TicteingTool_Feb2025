@@ -1,0 +1,17 @@
+[Unit]
+Description=indheartsuraksha.com.gunicorn daemon
+Requires=indheartsuraksha.com.gunicorn.socket
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/root/IND_heart_suraksha_Digitalocean/backend
+ExecStart=/root/IND_heart_suraksha_Digitalocean/backend/indenv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/indheartsuraksha.com.gunicorn.sock \
+          backend.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

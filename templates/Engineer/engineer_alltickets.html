@@ -439,7 +439,7 @@
                                         <div id="attachments-preview"></div>
                                         <div id="error-message" style="color: red; display: none;"></div>
                                     </div> <!-- Container for displaying uploaded files -->
-                                    <div class=" mt-2 text-white">
+                                    <div class="mt-2 text-white">
                                         <small>Supported file formats: JPG, JPEG, PNG, PDF, TXT, PPTX, XLSX, MP3, MP4, XLS.</small>
                                     </div>
                                     
@@ -620,90 +620,98 @@
                             
                             
  
-                            <script nonce="{{ csp_nonce }}"  >
-                                const attachmentsInput = document.getElementById('attachments');
-                                const previewContainer = document.getElementById('attachments-preview');
-                                const errorMessage = document.getElementById('error-message');
-                            
-                                // Allowed file extensions
-                                const allowedExtensions = ["jpg", "jpeg", "png", "pdf", "pptx", "xlsx", "mp3", "mp4", "xls", "txt"];
-                                const maxFileSize = 50 * 1024 * 1024; // 50 MB in bytes
-                                attachmentsInput.addEventListener('change', function (event) {
-                                    updatePreview(event.target.files);
-                                });
-                            
-                                function updatePreview(fileList) {
-                                    previewContainer.innerHTML = ''; // Clear previous previews
-                                    errorMessage.style.display = 'none'; // Hide error message
-                            
-                                    const validFiles = [];
-                                    Array.from(fileList).forEach((file, index) => {
-                                        // Validate file name format (only one dot separating name and extension)
-                                        const regex = /^[^\.]+\.[^\.]+$/;
-                                        if (!regex.test(file.name)) {
-                                            errorMessage.textContent = `Invalid file name format: ${file.name}`;
-                                            errorMessage.style.display = 'block';
-                                            return;
-                                        }
-                            
-                                        // Extract file extension and validate it
-                                        const fileExtension = file.name.split('.').pop().toLowerCase();
-                                        if (!allowedExtensions.includes(fileExtension)) {
-                                            errorMessage.textContent = `Unsupported file type: ${file.name}`;
-                                            errorMessage.style.display = 'block';
-                                            return;
-                                        }
-                            
-                                        // Validate file size
-                                        if (file.size > maxFileSize) {
-                                            errorMessage.textContent = `File size exceeds 50 MB: ${file.name}`;
-                                            errorMessage.style.display = 'block';
-                                            return;
-                                        }
-                            
-                                        validFiles.push(file);
-                            
-                                        // Create file preview
-                                        const link = document.createElement('a'); // Create a new anchor element
-                                        link.href = URL.createObjectURL(file); // Create a URL for the file
-                                        link.textContent = file.name; // Set the text to the file name
-                                        link.target = '_blank'; // Open link in a new tab
-                            
-                                        const deleteButton = document.createElement('button'); // Create a delete button
-                                        deleteButton.innerHTML = '<i class="fas fa-trash" style="color: red;"></i>'; // Trash icon
-                                        deleteButton.style.marginLeft = '10px'; // Add some spacing
-                                        deleteButton.style.background = 'none'; // No background
-                                        deleteButton.style.border = 'none'; // No border
-                                        deleteButton.style.cursor = 'pointer'; // Pointer cursor
-                            
-                                        deleteButton.onclick = function () {
-                                            const dataTransfer = new DataTransfer();
-                                            validFiles.forEach((f, i) => {
-                                                if (i !== index) { // Exclude the deleted file
-                                                    dataTransfer.items.add(f);
-                                                }
-                                            });
-                            
-                                            attachmentsInput.files = dataTransfer.files; // Update the file input
-                                            updatePreview(dataTransfer.files); // Update the preview
-                                        };
-                            
-                                        const fileContainer = document.createElement('div'); // Create a container for the link and button
-                                        fileContainer.appendChild(link); // Append the link
-                                        fileContainer.appendChild(deleteButton); // Append the delete button
-                                        previewContainer.appendChild(fileContainer); // Append the container to the preview section
+                            <script nonce="{{ csp_nonce }}">
+                                document.querySelectorAll('input[type="file"][id^="attachments"]').forEach(attachmentsInput => {
+                                    attachmentsInput.addEventListener('change', function (event) {
+                                        const parentContainer = attachmentsInput.closest('.mb-3'); // Find the closest parent container
+                                        const previewContainer = parentContainer.querySelector('#attachments-preview'); // Get the related preview container
+                                        const errorMessage = parentContainer.querySelector('#error-message'); // Get the related error message
+                                        
+                                        updatePreview(event.target.files, attachmentsInput, previewContainer, errorMessage);
                                     });
                             
-                                    // Update the file input with only valid files
-                                    const dataTransfer = new DataTransfer();
-                                    validFiles.forEach(file => dataTransfer.items.add(file));
-                                    attachmentsInput.files = dataTransfer.files;
+                                    function updatePreview(fileList, inputElement, previewContainer, errorMessage) {
+                                        previewContainer.innerHTML = ''; // Clear previous previews
+                                        errorMessage.style.display = 'none'; // Hide error message
+                                        errorMessage.textContent = ''; // Reset error text
+                                        let validFiles = [];
+                                        let errorFlag = false;
                             
-                                    // Check if there are no files left
-                                    if (validFiles.length === 0) {
-                                        attachmentsInput.value = ''; // Clear the file input
+                                        const allowedExtensions = ["jpg", "jpeg", "png", "pdf", "pptx", "xlsx", "mp3", "mp4", "xls", "txt"];
+                                        const maxFileSize = 50 * 1024 * 1024; // 50 MB in bytes
+                            
+                                        Array.from(fileList).forEach((file, index) => {
+                                            // Validate file name format (only one dot separating name and extension)
+                                            const regex = /^[^\.]+\.[^\.]+$/;
+                                            if (!regex.test(file.name)) {
+                                                errorMessage.textContent = `Invalid file name format: ${file.name}`;
+                                                errorMessage.style.display = 'block';
+                                                errorFlag = true;
+                                                return;
+                                            }
+                            
+                                            // Extract file extension and validate it
+                                            const fileExtension = file.name.split('.').pop().toLowerCase();
+                                            if (!allowedExtensions.includes(fileExtension)) {
+                                                errorMessage.textContent = `Unsupported file type: ${file.name}`;
+                                                errorMessage.style.display = 'block';
+                                                errorFlag = true;
+                                                return;
+                                            }
+                            
+                                            // Validate file size
+                                            if (file.size > maxFileSize) {
+                                                errorMessage.textContent = `File size exceeds 50 MB: ${file.name}`;
+                                                errorMessage.style.display = 'block';
+                                                errorFlag = true;
+                                                return;
+                                            }
+                            
+                                            validFiles.push(file);
+                            
+                                            // Create file preview
+                                            const link = document.createElement('a'); // Create a new anchor element
+                                            link.href = URL.createObjectURL(file); // Create a URL for the file
+                                            link.textContent = file.name; // Set the text to the file name
+                                            link.target = '_blank'; // Open link in a new tab
+                            
+                                            const deleteButton = document.createElement('button'); // Create a delete button
+                                            deleteButton.innerHTML = '<i class="fas fa-trash" style="color: red;"></i>'; // Trash icon
+                                            deleteButton.style.marginLeft = '10px'; // Add some spacing
+                                            deleteButton.style.background = 'none'; // No background
+                                            deleteButton.style.border = 'none'; // No border
+                                            deleteButton.style.cursor = 'pointer'; // Pointer cursor
+                            
+                                            deleteButton.onclick = function () {
+                                                const dataTransfer = new DataTransfer();
+                                                validFiles.forEach((f, i) => {
+                                                    if (i !== index) { // Exclude the deleted file
+                                                        dataTransfer.items.add(f);
+                                                    }
+                                                });
+                            
+                                                inputElement.files = dataTransfer.files; // Update the file input
+                                                updatePreview(dataTransfer.files, inputElement, previewContainer, errorMessage); // Update the preview
+                                            };
+                            
+                                            const fileContainer = document.createElement('div'); // Create a container for the link and button
+                                            fileContainer.appendChild(link); // Append the link
+                                            fileContainer.appendChild(deleteButton); // Append the delete button
+                                            previewContainer.appendChild(fileContainer); // Append the container to the preview section
+                                        });
+                            
+                                        // Update the file input with only valid files
+                                        const dataTransfer = new DataTransfer();
+                                        validFiles.forEach(file => dataTransfer.items.add(file));
+                                        inputElement.files = dataTransfer.files;
+                            
+                                        // Check if no valid files are selected
+                                        if (validFiles.length === 0 && !errorFlag) {
+                                            errorMessage.textContent = 'No valid files selected.';
+                                            errorMessage.style.display = 'block';
+                                        }
                                     }
-                                }
+                                });
                             </script>
                             
                             
