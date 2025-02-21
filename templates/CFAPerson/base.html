@@ -1,0 +1,500 @@
+{% extends 'CFAPerson/CFAPerson_header.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+		<div class="content-body">
+			<div class="container-fluid">
+
+				<!-- row -->
+				<div class="row">
+					<div class="widget-stat card" style="background-color:#61B9B5;">
+						<a href="{% url 'CFAPerson_alltickets' %}" class="text-decoration-none">
+							<div class="card-body text-center p-2">
+								<p class="mb-1 text-white">TOTAL TICKETS</p>
+								<h3 class="text-white" style="font-size: 34px;">{{tickets}}</h3>
+							</div>
+						</a>
+					</div>
+
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+						<a href="{% url 'CFAPerson_alltickets' %}?status=open" class="text-decoration-none">
+
+                        <div class="widget-stat card">
+							<div class="card-body p-4">
+								<div class="media ai-icon">
+									<span class="me-3 bgl-info text-warning">
+										<i class="fas fa-folder-open"></i> <!-- Font Awesome folder-open icon -->
+									</span>
+									
+									<div class="media-body">
+										<p class="mb-1">open Tickets</p>
+										<h4 class="mb-0">{{open_count}}</h4>
+										<span class="badge badge-warning">{{ open_percentage|floatformat:2 }}%</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+                    </div>
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+						<a href="{% url 'CFAPerson_alltickets' %}?status=seek-clarification" class="text-decoration-none">
+
+                        <div class="widget-stat card">
+							<div class="card-body  p-4">
+								<div class="media ai-icon">
+									<span class="me-3 bgl-dark text-dark">
+										<i class="fas fa-exclamation-triangle"></i> <!-- Font Awesome exclamation-triangle icon -->
+									</span>
+									<div class="media-body">
+										<p class="mb-1">Seek Clarify</p>
+										<h4 class="mb-0">{{seekclarify_count}}</h4>
+										<span class="badge badge-dark">{{ seekclarify_percentage|floatformat:2 }}%</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+                    </div>
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+						<a href="{% url 'CFAPerson_alltickets' %}?status=assigned" class="text-decoration-none">
+
+                        <div class="widget-stat card">
+							<div class="card-body  p-4">
+								<div class="media ai-icon">
+									<span class="me-3 bgl-danger text-secondary">
+										<i class="fas fa-exclamation-triangle"></i> <!-- Font Awesome exclamation-triangle icon -->
+									</span>
+									<div class="media-body">
+										<p class="mb-1">Assigned</p>
+										<h4 class="mb-0">{{assigned_count}}</h4>
+										<span class="badge badge-secondary">{{ assigned_percentage|floatformat:2 }}%</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+                    </div>
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+						<a href="{% url 'CFAPerson_alltickets' %}?status=inprogress" class="text-decoration-none">
+
+						<div class="widget-stat card">
+							<div class="card-body p-4">
+								<div class="media ai-icon">
+									<span class="me-3 bgl-info text-info">
+										<i class="fas fa-clock"></i> <!-- Font Awesome clock icon -->
+									</span>
+									<div class="media-body">
+										<p class="mb-1">Inprogress</p>
+										<h4 class="mb-0">{{inprogress_count}}</h4>
+										<span class="badge badge-info">{{ inprogress_percentage|floatformat:2 }}%</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+                    </div>
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+						<a href="{% url 'CFAPerson_alltickets' %}?status=pending" class="text-decoration-none">
+
+						<div class="widget-stat card">
+							<div class="card-body p-4">
+								<div class="media ai-icon">
+									<span class="me-3 bgl-danger text-danger">
+										<i class="fas fa-clock"></i> <!-- Font Awesome clock icon -->
+									</span>
+									<div class="media-body">
+										<p class="mb-1">Pending</p>
+										<h4 class="mb-0">{{pending_count}}</h4>
+										<span class="badge badge-danger">{{ pending_percentage|floatformat:2 }}%</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+                    </div>
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+						<a href="{% url 'CFAPerson_alltickets' %}?status=Resolved" class="text-decoration-none">
+
+						<div class="widget-stat card">
+							<div class="card-body p-4">
+								<div class="media ai-icon">
+									<span class="me-3 bgl-primary text-primary">
+										<i class="fas fa-clock"></i> <!-- Font Awesome clock icon -->
+									</span>
+									<div class="media-body">
+										<p class="mb-1">Resolved</p>
+										<h4 class="mb-0">{{resolved_count}}</h4>
+										<span class="badge badge-primary">{{ resolved_percentage|floatformat:2 }}%</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+                    </div>
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+						<a href="{% url 'CFAPerson_alltickets' %}?status=reopen" class="text-decoration-none">
+
+						<div class="widget-stat card">
+							<div class="card-body p-4">
+								<div class="media ai-icon">
+									<span class="me-3 bgl-info text-warning">
+										<i class="fas fa-clock"></i> <!-- Font Awesome clock icon -->
+									</span>
+									<div class="media-body">
+										<p class="mb-1">Re-Open </p>
+										<h4 class="mb-0">{{reopen_count}}</h4>
+										<span class="badge badge-warning">{{ reopen_percentage|floatformat:2 }}%</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+                    </div>
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+						<a href="{% url 'CFAPerson_alltickets' %}?status=closed" class="text-decoration-none">
+
+                        <div class="widget-stat card">
+							<div class="card-body p-4">
+								<div class="media ai-icon">
+									<span class="me-3 bgl-success text-success">
+										<i class="fas fa-chart-pie"></i> <!-- Font Awesome chart-pie icon -->
+									</span>
+									
+									<div class="media-body">
+										<p class="mb-1">Closed Tickets</p>
+										<h4 class="mb-0">{{closed_count}}</h4>
+										<span class="badge badge-success">{{closed_percentage|floatformat:2}}%</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+                    </div>
+					
+
+
+					<div class="col-xl-4 col-xxl-4 col-lg-12">
+						<div class="card">
+
+							<div class="card-body">
+								<h4 class="card-title">Ticket Status</h4><br><br><br>
+								<div class="row">
+									<div class="col-12 mt-4">
+										<div class="d-flex justify-content-between">
+											<h6>{{ open_percentage|floatformat:2 }}%</h6>
+											<span>OPEN TICKETS</span>
+										</div>
+										<div class="progress">
+											<div class="progress-bar progress-bar-striped progress-bar-animated bg-danger"
+												style="width: {{ open_percentage }}%"></div>
+										</div>
+									</div>
+									<div class="col-12 mt-4">
+										<div class="d-flex justify-content-between">
+											<h6>{{ seekclarify_percentage|floatformat:2 }}%</h6>
+											<span>SEEK CLARIFICATION TICKETS</span>
+										</div>
+										<div class="progress">
+											<div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+												style="width: {{ seekclarify_percentage }}%"></div>
+										</div>
+									</div>
+									<div class="col-12 mt-4">
+										<div class="d-flex justify-content-between">
+											<h6>{{ assigned_percentage|floatformat:2 }}%</h6>
+											<span>ASSIGNED TICKETS</span>
+										</div>
+										<div class="progress">
+											<div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary"
+												style="width: {{ assigned_percentage }}%"></div>
+										</div>
+									</div>
+									<div class="col-12 mt-4">
+										<div class="d-flex justify-content-between">
+											<h6>{{ inprogress_percentage|floatformat:2 }}%</h6>
+											<span>INPROGRESS TICKETS</span>
+										</div>
+										<div class="progress">
+											<div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+												style="width: {{ inprogress_percentage }}%"></div>
+										</div>
+									</div>
+									<div class="col-12 mt-4">
+										<div class="d-flex justify-content-between">
+											<h6>{{ pending_percentage|floatformat:2 }}%</h6>
+											<span>PENDING TICKETS</span>
+										</div>
+										<div class="progress">
+											<div class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+												style="width: {{ pending_percentage }}%"></div>
+										</div>
+									</div>
+									<div class="col-12 mt-4">
+										<div class="d-flex justify-content-between">
+											<h6>{{ resolved_percentage|floatformat:2 }}%</h6>
+											<span>RESOLVED TICKETS</span>
+										</div>
+										<div class="progress">
+											<div class="progress-bar progress-bar-striped progress-bar-animated"
+												style="width: {{ resolved_percentage }}% ;background-color: #c60e82;"></div>
+										</div>
+									</div>
+									<div class="col-12 mt-4">
+										<div class="d-flex justify-content-between">
+											<h6>{{ reopen_percentage|floatformat:2 }}%</h6>
+											<span>RE-OPEN TICKETS</span>
+										</div>
+										<div class="progress">
+											<div class="progress-bar progress-bar-striped progress-bar-animated"
+												style="width: {{ reopen_percentage }}% ;background-color:rgb(217, 239, 23);"></div>
+										</div>
+									</div>
+									<div class="col-12 mt-4">
+										<div class="d-flex justify-content-between">
+											<h6>{{ closed_percentage|floatformat:2 }}%</h6>
+											<span>CLOSED TICKETS</span>
+										</div>
+										<div class="progress">
+											<div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+												style="width: {{ closed_percentage }}%"></div>
+										</div>
+									</div>
+									
+									<!--<div class="col-12 mt-4">
+										<div class="d-flex justify-content-between">
+											<h6>{{ ticket_percentage|floatformat:2 }}%</h6>
+											<span>ALL TICKETS</span>
+										</div>
+										<div class="progress">
+											<div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+												style="width: {{ ticket_percentage }}%"></div>
+										</div>
+									</div>-->
+
+								</div>
+							</div>
+
+						</div>
+					</div>
+					<!-- Your HTML code as provided -->
+					<div class="col-xl-8 col-xxl-8 col-lg-12 col-sm-12">
+						<div id="user-activity" class="card">
+							<div class="card-header border-0 pb-0 d-sm-flex d-block">
+								<h4 class="card-title">Tickets Activity</h4>
+								<div class="card-action mb-sm-0 my-2">
+									<ul class="nav nav-tabs" role="tablist">
+										<li class="nav-item">
+											<a class="nav-link active" data-bs-toggle="tab" href="#day" role="tab" id="day-tab">
+												Overall Tickets
+											</a>
+										
+									</ul>
+								</div>
+							</div>
+				
+							<div class="card-body">
+								<div class="tab-content" id="myTabContent">
+									<div class="tab-pane fade show active" id="day" role="tabpanel">
+										<canvas id="ticketStatusChartDay" class="chartjs"></canvas>
+									</div>
+									<div class="tab-pane fade" id="month" role="tabpanel">
+										<canvas id="ticketStatusChartMonth" class="chartjs"></canvas>
+									</div>
+									<div class="tab-pane fade" id="year" role="tabpanel">
+										<canvas id="ticketStatusChartYear" class="chartjs"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				
+					
+					
+					
+					
+					
+					
+					
+					<div class="col-xl-12 col-lg-12 col-xxl-12 col-sm-12">
+						<div class="card">
+							<div class="card-header">
+								<h4 class="card-title">Recent Tickets</h4>
+							</div>
+							<div class="card-body">
+								<div class="table-responsive recentOrderTable">
+									<table class="table verticle-middle table-responsive-md">
+										<thead>
+											<tr>
+												<th scope="col">S.No</th>
+												<th scope="col">Category Name</th>
+												<th scope="col">Subcategory Name</th>
+												<th scope="col">Ticket no</th>
+												<th scope="col">Created At</th>
+												<th scope="col">Status Changed At</th>
+												<th scope="col">Status</th>
+
+											</tr>
+
+										</thead>
+										<tbody>
+											{% for i in all_ticket_updated|slice:":5" %} {# Only the first 5 items #}
+											<tr>
+												<td>{{ forloop.counter }}</td> {# Display the index (starting from 1) #}
+												<td>{{ i.category }}</td>
+												<td>{{ i.subcategory }}</td>
+												<td>{{ i.id|dynamic_zfill:i.store_code }}</td>
+												<td>{{ i.created }}</td>	
+												<td>{{ i.status_changed_date }}</td>												
+											
+												<td>
+													{% if i.status == 'open' %}
+													<span class="badge badge-danger"
+														style="font-size: 10px;">Open</span>
+													{% elif i.status == 'inprogress' %}
+													<span class="badge badge-info" style="font-size: 10px;">In
+														Progress</span>
+													{% elif i.status == 'pending' %}
+													<span class="badge badge-warning"
+														style="font-size: 10px;">Pending</span>
+													{% elif i.status == 'closed' %}
+													<span class="badge badge-success"
+														style="font-size: 10px;">Closed</span>
+													{% elif i.status == 'assigned' %}
+													<span class="badge badge-secondary"
+														style="font-size: 10px;">Assigned</span>
+													{% elif i.status == 'Resolved' %}
+													<span class="badge badge-primary"
+														style="font-size: 10px; ">Resolved</span>
+													{% elif i.status == 'seek-clarification' %}
+								
+													<span class="badge"
+																	style="font-size: 10px;background-color:#05645f; color: white;">Seek-clarification</span>
+													{% elif i.status == 'reopen' %}
+													<span class="badge"
+																	style="font-size: 10px;background-color: #c60e82; color: white;">Re-open</span>
+													{% else %}														
+													<span class="badge badge-primary" style="font-size: 10px;">{{
+														i.status }}</span>
+													{% endif %}
+												</td>
+											</tr>
+											{% endfor %}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<script nonce="{{ csp_nonce }}"  >
+			document.addEventListener('DOMContentLoaded', function () {
+				// Function to create a chart with initial data
+				function createChart(ctx, label, openPercentage, assignedPercentage, inprogressPercentage, pendingPercentage, resolvedPercentage, closePercentage) {
+					// Define an array of colors for each status
+					var statusColors = ['rgba(255, 0, 0, 0.5)', 'rgba(255, 192, 203, 1)', 'rgba(0, 123, 255, 1)', 'rgba(255, 165, 0, 1)', 'rgba(128, 0, 128, 1)', 'rgba(40, 167, 69, 1)'];
+
+					return new Chart(ctx, {
+						type: 'bar',
+						data: {
+							labels: ['Open Tickets', 'Assigned Tickets', 'Inprogress Tickets', 'Pending Tickets', 'Resolved Tickets', 'Closed Tickets'],
+							datasets: [{
+								label: 'Ticket Status',
+								data: [openPercentage, assignedPercentage, inprogressPercentage, pendingPercentage, resolvedPercentage, closePercentage],
+								backgroundColor: statusColors,
+								borderColor: statusColors.map(color => color.replace('0.5', '1')), // Border color for each status
+								borderWidth: 1
+							}]
+						},
+						options: {
+							animation: {
+								duration: 2000,
+							},
+							scales: {
+								y: {
+									beginAtZero: true,
+									max: 100
+								}
+							}
+						}
+					});
+				}
+
+				var openTicketsPercentage = {{ open_percentage|floatformat:2 }};
+				var assignedTicketsPercentage = {{ assigned_percentage|floatformat:2 }};
+				var inprogressTicketsPercentage = {{ inprogress_percentage|floatformat:2 }};
+				var pendingTicketsPercentage = {{ pending_percentage|floatformat:2 }};
+				var resolvedTicketsPercentage = {{ resolved_percentage|floatformat:2 }};
+				var closeTicketsPercentage = {{ closed_percentage|floatformat:2 }};
+
+				// Create a chart on each canvas element for the initial tab
+				var currentTab = 'day'; // Initialize with 'day' tab
+				var ctxDay = document.getElementById('ticketStatusChartDay').getContext('2d');
+				var ctxMonth = document.getElementById('ticketStatusChartMonth').getContext('2d');
+				var ctxYear = document.getElementById('ticketStatusChartYear').getContext('2d');
+				var dayChart = createChart(ctxDay, 'Day', openTicketsPercentage, assignedTicketsPercentage, inprogressTicketsPercentage, pendingTicketsPercentage, resolvedTicketsPercentage, closeTicketsPercentage);
+				var monthChart = createChart(ctxMonth, 'Month', openTicketsPercentage, assignedTicketsPercentage, inprogressTicketsPercentage, pendingTicketsPercentage, resolvedTicketsPercentage, closeTicketsPercentage);
+				var yearChart = createChart(ctxYear, 'Year', openTicketsPercentage, assignedTicketsPercentage, inprogressTicketsPercentage, pendingTicketsPercentage, resolvedTicketsPercentage, closeTicketsPercentage);
+
+				// Function to update chart data based on tab
+				function updateChart(tab) {
+					if (tab === 'day') {
+						// Update with current day data
+						dayChart.update();
+					} else if (tab === 'month') {
+						// Update with current month data
+						monthChart.update();
+					} else if (tab === 'year') {
+						// Update with current year data
+						yearChart.update();
+					}
+				}
+
+				// Handle tab click events
+				var dayTab = document.getElementById('day-tab');
+				var monthTab = document.getElementById('month-tab');
+				var yearTab = document.getElementById('year-tab');
+
+				dayTab.addEventListener('click', function () {
+					currentTab = 'day';
+					updateChart(currentTab);
+				});
+
+				monthTab.addEventListener('click', function () {
+					currentTab = 'month';
+					updateChart(currentTab);
+				});
+
+				yearTab.addEventListener('click', function () {
+					currentTab = 'year';
+					updateChart(currentTab);
+				});
+			});
+
+		</script>
+		
+		<script nonce="{{ csp_nonce }}"  >
+
+			$(document).ready(function () {
+
+				// Toggle the 'minimized' class on the nav-header when the hamburger is clicked
+
+				$(".hamburger").click(function () {
+
+					$(".nav-header").toggleClass("minimized");
+
+				});
+
+			});
+
+
+
+		</script>
+		
+		
+
+{% endblock %}		

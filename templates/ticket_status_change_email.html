@@ -1,0 +1,95 @@
+{% load static %}
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ticket Status Change</title>
+    <style>
+        /* Add custom CSS styles for coloring and layout */
+        body {
+            background-color: #f5f5f5; /* Set a background color */
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            background-color: #fff; /* Set a container background color */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px #888888;
+        }
+
+        #header {
+            background-color: #61b9b5; /* Set header background color */
+            color: #fff; /* Set text color in header */
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px 10px 0px 0px;
+        }
+
+        #footer {
+            background-color: #c1bdbd; /* Set footer background color */
+            color: #fff; /* Set text color in footer */
+            text-align: center;
+            padding: 10px;
+            border-radius: 0px 0px 10px 10px;
+        }
+
+        /* Style the Titan logo */
+        #logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 100px; /* Adjust the width as needed */
+        }
+
+        /* Add a new CSS class for light-colored and centered text */
+        .light-center {
+            color: #888; /* Set the text color to a light shade */
+            text-align: center; /* Center-align the text */
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="header">
+            <h1>Ticket Status Change</h1>
+            <p>The status of ({{ instance.id|dynamic_zfill:instance.store_code }}) has been changed to 
+                {% if instance.status == 'inprogress' %}
+                    <span style="color: blue;">{{ instance.status|capfirst }}</span>
+                {% elif instance.status == 'pending' %}
+                    <span style="color: orange;">{{ instance.status|capfirst }}</span>
+                {% elif instance.status == 'closed' %}
+                    <span style="color: red;">{{ instance.status|capfirst }}</span>
+                {% else %}
+                    {{ instance.status|capfirst }}
+                {% endif %}
+                by {{ instance.assignee.username|capfirst }}.
+            </p>
+            
+        </div>
+        <p class="light-center" ><strong>Ticket Number:</strong> <b>{{ instance.id|dynamic_zfill:instance.store_code }}</b></p>
+        <p class="light-center"><strong>Ticket Status:</strong>
+            {% if instance.status == 'inprogress' %}
+                <b style="color: blue;">{{ instance.status|capfirst }}</b>
+            {% elif instance.status == 'pending' %}
+                <b style="color: orange;">{{ instance.status|capfirst}}</b>
+            {% elif instance.status == 'closed' %}
+                <b style="color: red;">{{ instance.status|capfirst }}</b>
+            {% else %}
+                <b>{{ instance.status }}</b>
+            {% endif %}
+        </p>
+                <p class="light-center" ><strong>CFA Code:</strong> {{ instance.store_code }}</p>
+        <p class="light-center" ><strong>Created Date:</strong> {{ instance.created_by.username|capfirst }}</p>
+        <p class="light-center" ><strong>Change Date:</strong> {{ instance.status_changed_date }}</p>
+        <p class="light-center"><strong>Category:</strong> {{ instance.category }}</p>
+        <p class="light-center" ><strong>Subcategory:</strong> {{ instance.subcategory }}</p>
+        <p class="light-center" ><strong>Description:</strong>{{ instance.short_description|capfirst }}</p>
+        <p class="light-center" ><strong>Comments:</strong> {{ instance.resolver_comments|capfirst }}</p>
+        <p>Visit Website: <a href="https://wwdsupport.titan.in/">https://wwdsupport.titan.in/</a></p>
+        <div id="footer">
+            <p>Copyright � Designed &amp; Developed by <a href="#" target="_blank">Pinesphere</a> 2023</p>
+        </div>
+    </div>
+</body>
+</html>

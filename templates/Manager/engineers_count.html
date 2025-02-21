@@ -1,0 +1,42 @@
+{% extends 'Manager/manager_header.html' %}
+
+{% load static %}
+{% load custom_filters %}
+ 
+{% block content %}
+
+<div class="content-body">
+	<div class="container-fluid">
+
+		<!-- row -->
+		<div class="row">
+
+
+			{% for engineer_data in engineers_data %}
+			<div class="col-xl-3 col-xxl-3 col-sm-6">
+				<div class="card overflow-hidden">
+					<div class="social-graph-wrapper widget-googleplus">
+						<!-- Replace the Google+ icon with a wrench icon -->
+						<span class="s-icon"><i class="fas fa-user"></i> {{ engineer_data.engineer.username|capfirst}}</span>
+					</div>
+					<div class="row">
+						<div class="pt-3 pb-3 ps-0 pe-0 text-center">
+							<h4 class="m-1" style="font-size: 35px;">
+								<span class="counter">{{engineer_data.assigned_tickets_count }}</span> </h4>
+							<p class="m-0"><b>Tickets Count</b></p>
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+
+
+
+		</div>
+	</div>
+</div>
+
+
+</div>
+
+{% endblock %}

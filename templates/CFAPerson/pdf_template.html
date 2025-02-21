@@ -1,0 +1,47 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Data</title>
+</head>
+<body>
+    <h1>Ticket Data</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Ticket Number</th>
+                <th>Category</th>
+                <th>Subcategory</th>
+                <th>Short Description</th>
+                <th>Detailed Description</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th>Assigned Date</th>
+                <th>Closed Date</th>
+                <th>Closure Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in all_tickets %}
+            <tr>
+                <td>{{ ticket.id|dynamic_zfill:ticket.store_code }}</td>
+                <td>{{ ticket.category }}</td>
+                <td>{{ ticket.subcategory }}</td>
+                <td>{{ ticket.short_description }}</td>
+                <td>{{ ticket.detailed_description }}</td>
+                <td>{{ ticket.created }}</td>
+                <td>{{ ticket.status }}</td>
+                <td>{{ ticket.assignee }}</td>
+                <td>{{ ticket.assigned_date }}</td>
+                <td>{{ ticket.closed_date }}</td>
+                <td>{{ ticket.closure_comments }}</td>
+
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

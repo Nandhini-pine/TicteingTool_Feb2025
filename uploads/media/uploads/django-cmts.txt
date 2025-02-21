@@ -1,0 +1,34 @@
+Create folder
+open cmd
+Create Virtual envoronment - python -m venv env
+activate - env\Scripts\activate
+deactivate - env\scripts\deactivate
+
+django install - pip install django
+create project - django-admin startproject prjname
+
+
+cd prjname
+ code .
+
+python manage.py runserver
+
+database connection :
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'blog',
+        'USER': 'postgres',
+        'PASSWORD':'postgres',
+        'PORT':'5432',
+        'HOST':'localhost'
+    }
+}
+
+Migrations :
+
+python manage.py makemigrations
+python manage.py migrate
+
+

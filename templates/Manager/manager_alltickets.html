@@ -1,0 +1,903 @@
+{% extends 'Manager/manager_header.html' %}
+
+{% load static %}
+{% load custom_filters %}
+ 
+{% block content %}
+
+<style>
+
+		
+    .popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background overlay */
+    z-index: 1000; /* Ensure the popup is above other elements */
+}
+
+.popup-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: 300px; /* Adjust the width as needed */
+    text-align: center;
+}
+
+.close-popup {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+}
+
+
+/* Add this CSS to your stylesheet or in a <style> tag in your HTML template */
+    .success {
+    color: #2196F3; /* Green for success messages */
+}
+
+.info {
+    color: #132330; /* Blue for info messages */
+}
+
+.warning {
+    color: #FF9800; /* Orange for warning messages */
+}
+
+.error {
+    color: #F44336; /* Red for error messages */
+}
+
+@media (max-width: 767px) {
+    .text-nowrap-on-desktop {
+        white-space: normal !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .text-nowrap-on-desktop {
+        white-space: nowrap !important;
+    }
+}
+
+#gfg {
+            color: green;
+            font-size: large;
+        }
+ /* Customize the modal header */
+ .modal-header {
+        background-color: #61b9b5;
+        color: #fff;
+    }
+
+    /* Style the modal title */
+    .modal-title {
+        font-size: 24px;
+    }
+
+    /* Style the Close button */
+    .btn-close {
+        color: #fff;
+    }
+
+    /* Style the modal body and rows */
+    .modal-body {
+        padding: 20px;
+    }
+
+    .row {
+        margin-bottom: 15px;
+    }
+
+    /* Style the labels and data in the modal */
+    p b {
+        font-weight: bold;
+    }
+
+    /* Style the badge for the status */
+    .badge {
+        font-size: 14px;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    /* Style the scrollable sections */
+    .scrollable-section {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        width:730px;
+    }
+
+    /* Style the attachment links */
+    .attachment-link {
+        color: #007bff;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+    .table th, .table td {
+                                    border: 1px solid #c9c9c9de;
+                                    padding: 8px;
+                                }
+                                table td {
+    width: 50%; /* You can adjust the width as needed */
+}
+.widget-stat {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .widget-stat:hover .card-body {
+        filter: blur(5px);
+    }
+
+    .widget-stat:hover .action-buttons {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .action-buttons {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        gap: 10px;
+    }
+
+    .action-buttons a {
+        background-color: #FF6175; /* Bootstrap primary color */
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .action-buttons a:hover {
+        background-color: #f45a6f; /* Darker shade of primary color */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .action-buttons a:active {
+        background-color: #f45a6f; /* Even darker shade */
+    }
+
+
+    /* Tracking status styles */
+
+    .hh-grayBox {
+    background-color: white;
+    margin-bottom: 20px;
+    margin-top: 20px; /* Optional: Adjust as needed */
+    box-shadow: 0 2px 4px rgba(252, 252, 252, 0.1); /* Optional: Add a subtle shadow */
+}
+
+.pt45 {
+    padding-top: 45px;
+}
+.order-tracking {
+    text-align: center;
+    width: 12.5%; /* Adjust the width to fit eight in a row */
+    position: relative;
+    display: inline-block; /* Change to inline-block for horizontal alignment */
+    margin-bottom: 20px; /* Spacing between rows */
+}
+.order-tracking .is-complete {
+    display: block;
+    position: relative;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    border: 0px solid #AFAFAF;
+    background-color: #f7be16;
+    margin: 0 auto;
+    transition: background 0.25s linear;
+    -webkit-transition: background 0.25s linear;
+    z-index: 2;
+}
+.order-tracking .is-complete:after {
+    display: block;
+    position: absolute;
+    content: '';
+    height: 14px;
+    width: 7px;
+    top: -2px;
+    bottom: 0;
+    left: 5px;
+    margin: auto 0;
+    border: 0px solid #AFAFAF;
+    border-width: 0px 2px 2px 0;
+    transform: rotate(45deg);
+    opacity: 0;
+}
+.order-tracking.completed .is-complete {
+    border-color: #28443c;
+    border-width: 0px;
+    background-color: #28443c;
+}
+.faded.order-tracking.completed .is-complete {
+    border-color: #27aa80;
+    border-width: 0px;
+    background-color: #27aa80;
+}
+.others.order-tracking.completed .is-complete {
+    border-color: #f7be16;
+    border-width: 0px;
+    background-color: #f7be16;
+}
+.others.order-tracking {
+    opacity: 0.5; /* Adjust opacity to your preference */
+}
+.order-tracking.completed .is-complete:after {
+    border-color: #fff;
+    border-width: 0px 3px 3px 0;
+    width: 7px;
+    left: 11px;
+    opacity: 1;
+}
+
+.order-tracking p {
+    color: #A4A4A4;
+    font-size: 13px;
+    margin-top: 8px;
+    margin-bottom: 0;
+    line-height: 20px;
+    font-weight: bold;
+    
+}
+.faded.order-tracking p {
+    color: #A4A4A4;
+    font-size: 13px;
+    margin-top: 8px;
+    margin-bottom: 0;
+    line-height: 20px;
+    font-weight: 500;
+}
+.others.order-tracking p {
+    color: #A4A4A4;
+    font-size: 13px;
+    margin-top: 8px;
+    margin-bottom: 0;
+    line-height: 20px;
+    font-weight: 500;
+}
+
+
+.order-tracking p span {
+    font-size: 14px;
+}
+.order-tracking.completed p {
+    color: #000;
+}
+.order-tracking::before {
+    content: '';
+    display: block;
+    height: 3px;
+    width: calc(100% - 40px);
+    background-color: #f7be16;
+    top: 13px;
+    position: absolute;
+    left: calc(-50% + 20px);
+    z-index: 0;
+    
+}
+.order-tracking:first-child:before {
+    display: none;
+}
+.order-tracking.completed:before {
+    background-color: #28443c;
+}
+.faded.order-tracking.completed:before {
+    background-color: #27aa80;
+}
+.others.order-tracking.completed:before {
+    background-color: #f7be16;
+    
+}
+
+.status-tooltip {
+    position: relative;
+    cursor: pointer; /* Shows a pointer cursor when hovering */
+}
+
+.status-tooltip::after {
+    content: attr(data-tooltip); /* Tooltip content from data attribute */
+    position: absolute;
+    top: 100%; /* Position above the element */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.3s;
+    pointer-events: none; /* Prevents interaction */
+}
+
+.status-tooltip:hover::after {
+    opacity: 1; /* Show on hover */
+}
+</style>
+ 
+       <div class="content-body">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Add this code inside your HTML template, where you want to display error messages -->
+                {% if error_messages %}
+                <div class="alert alert-danger">
+                    {{ error_messages }}
+                </div>
+                {% endif %}
+
+                <!-- Loop through to display open status tickets -->
+                {% for i in tickets %}
+                <div class="col-xl-4 col-xxl-4 col-lg-6 col-sm-6">
+                    <div class="widget-stat card">
+                        <div class="card-body p-4">
+                            <div class="top-block d-flex align-items-center justify-content-between">
+                               
+                                <div class="top-block d-flex align-items-center justify-content-between">
+
+                                <!-- Status Badge -->
+                                {% if i.status == 'open' %}
+                                    <span class="badge badge-danger" style="font-size: 10px;">Open</span>
+                                {% elif i.status == 'inprogress' %}
+                                    <span class="badge badge-info" style="font-size: 10px;">In Progress</span>
+                                {% elif i.status == 'pending' %}
+                                    <span class="badge badge-warning" style="font-size: 10px;">Pending</span>
+                                {% elif i.status == 'closed' %}
+                                    <span class="badge badge-success" style="font-size: 10px;">Closed</span>
+                                {% elif i.status == 'assigned' %}
+                                    <span class="badge badge-secondary" style="font-size: 10px;">Assigned</span>
+                                {% elif i.status == 'seek-clarification' %}
+                                    <span class="badge badge-dark" style="font-size: 10px;">Seek-Clarification</span>
+                                {% elif i.status == 'reopen' %}
+                                    <span class="badge " style="font-size: 10px;background-color: #c60e82; color: white;">Re-open</span>
+                                {% else %}
+                                    <span class="badge badge-primary" style="font-size: 10px;">{{ i.status }}</span>
+                                {% endif %}
+                                </div>
+                                <div>
+                                    {% if i.status == 'open' %}
+                                    <!-- Open Status Icon with underscore symbol -->
+                                    <i class="fa fa-user-plus" style="font-size: 20px; color: #05645f;"></i>
+                                    {% elif i.status == 'assigned' %}
+                                        <span class="badge badge-primary" style="font-size: 10px;"></span>
+                                        <!-- Assigned Status Icon -->
+                                        <i class="fa fa-user" style="font-size: 20px; color: #05645f;"></i>
+                                    {% elif i.status == 'inprogress' %}
+                                        
+                                        <!-- In Progress Status Icon -->
+                                        <i class="fa fa-spinner" style="font-size: 20px; color: #05645f;"></i>
+                                    {% elif i.status == 'pending' %}
+                                        
+                                        <!-- Pending Status Icon -->
+                                        <i class="fa fa-clock" style="font-size: 20px; color: #05645f;"></i>
+                                    {% elif i.status == 'reopen' %}
+                                        <!-- Reopen Status Icon -->
+                                        <i class="fa fa-unlock" style="font-size: 20px; color: #05645f;"></i>
+                                    
+                                    {% elif i.status == 'closed' %}
+                                        
+                                        <!-- Closed Status Icon -->
+                                        <i class="fa fa-lock" style="font-size: 20px; color: #05645f;"></i>
+                                    {% elif i.status == 'seek-clarification' %}
+                                        
+                                        <!-- Closed Status Icon -->
+                                        <i class="fa fa-question-circle" style="font-size: 20px; color: #05645f;"></i>
+                                    {% else %}
+                                        <!-- Default Icon -->
+                                        <i class="fa fa-question" style="font-size: 20px; color: #007bff;"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                           
+                            <div class="media">
+                                <span class="me-3" style="background-color: rgb(241, 239, 230);">
+                                    <i class="flaticon-381-calendar-1"></i>
+                                </span>
+                                <div class="media-body text-white">
+                                    <p class="mb-1" style="font-size: 14px; color: black;"><b>{{ i.id|dynamic_zfill:i.store_code }}</b></p>
+                                    <p class="" style="font-size: 11px; color: #0d9e97;"><b>{{ i.category }}</b></p>
+                                    <p class="" style="font-size: 10px; color: black;"><b>Created : {{ i.created }}</b></p>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            {% if i.status == 'reopen' or i.status == 'open' or i.status == 'assigned' %}
+                                {% if i.status == 'assigned' %}
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#ticketModal{{ i.id }}">Reassign</a>
+                                {% else %}
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#ticketModal{{ i.id }}">Assign</a>
+                                {% endif %}
+                            {% endif %}
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#ticketHistoryModal{{ i.id }}">History</a>
+                        </div>
+                        
+                        
+                        
+                    </div>
+                </div>
+                <div class="modal fade" id="ticketHistoryModal{{ i.id }}" tabindex="-1" aria-labelledby="ticketHistoryModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" >
+                        <div class="modal-content">
+                            <!-- Ticket History Details Here -->
+                            <div class="modal-header">
+                                <div>
+                                    <h5 class="modal-title" style="color: #fff;" id="ticketHistoryModalLabel">Ticket History: {{ i.id|dynamic_zfill:i.store_code }}</h5>
+                                    <span class="created-by" style="font-size: 12px;color: #c9fffd;">Ticket Created by <b>{{i.created_by}}</b></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Display Ticket History Details Here -->
+
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" style="border-collapse: revert;">
+                                        <tbody>
+                                            <tr>
+                                                <td><b>Ticket Number:</b><br> {{ i.id|dynamic_zfill:i.store_code }}</td>
+                                                <td><b>Ticket Created Date:</b><br> {{ i.created }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Current Status:</b><br>
+                                                    {% if i.status == 'open' %}
+                                                    <span class="badge badge-danger" style="font-size: 10px;">Open</span>
+                                                    {% elif i.status == 'inprogress' %}
+                                                    <span class="badge badge-info" style="font-size: 10px;">In Progress</span>
+                                                    {% elif i.status == 'pending' %}
+                                                    <span class="badge badge-warning" style="font-size: 10px;">Pending</span>
+                                                    {% elif i.status == 'closed' %}
+                                                    <span class="badge badge-success" style="font-size: 10px;">Closed</span>
+                                                    {% elif i.status == 'assigned' %}
+                                                    <span class="badge badge-secondary" style="font-size: 10px;">Assigned</span>
+                                                    {% elif i.status == 'reopen' %}
+                                                    <span class="badge badge-secondary" style="font-size: 10px;background-color: #c60e82; color: white;">Reopen</span>
+                                                    {% else %}
+                                                    <span class="badge badge-primary" style="font-size: 10px;">{{ i.status }}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td><b>Raised by:</b><br> {{i.store_code}}</td>
+                                            </tr>
+                                            {% if i.status != 'open' and  i.status != 'reopen' %}
+                                            <tr>
+                                                <td><b>Assigned Engineer:</b><br> {{ i.assignee }}</td>
+
+                                                <td><b>Ticket Assigned Date:</b><br> {{ i.assigned_date }}</td>
+                                                                                     
+                                            </tr>
+                                            {% endif %}
+
+                                            {% if i.status == 'reopen' %}
+
+                                            <tr>
+                                                <td><b>Resolved Date:</b><br> {{ i.resolved_date }}</td>
+
+                                                <td><b>Resolver Comments:</b><br> {{ i.resolver_comments }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            
+                                            {% if i.status != 'open' and i.status != 'assigned' %}
+                                            <tr>
+                                               
+                                                <td><b>
+                                                    {% if i.status == 'Resolved' %}
+                                                        Resolved Date:
+                                                    {% elif i.status == 'closed' %}
+                                                        Ticket Closed Date:
+                                                    {% elif i.status == 'pending' %}
+                                                        Ticket Pending Date:
+                                                    {% elif i.status == 'inprogress' %}
+                                                        Ticket Inprogress Date:
+                                                    {% elif i.status == 'reopen' %}
+                                                        Ticket Reopen Date:
+                                                    {% elif i.status == 'seek-clarification' %}
+                                                        Ticket status Changed Date:
+                                                    {% else %}
+                                                        Ticket Closed Date:
+                                                    {% endif %}
+                                                    </b><br>
+                                                    {% if i.status == 'Resolved' %}
+                                                        {{ i.resolved_date }}
+                                                    {% elif i.status == 'closed' %}
+                                                        {{ i.closed_date }}
+                                                    {% elif i.status == 'pending' %}
+                                                        {{ i.status_changed_date }}
+                                                    {% elif i.status == 'inprogress' %}
+                                                        {{ i.status_changed_date }}
+                                                    {% elif i.status == 'reopen' %}
+                                                        {{ i.reopen_date }}
+                                                    {% elif i.status == 'seek-clarification' %}
+                                                        {{ i.status_changed_date }}
+                                                 
+                                                    {% else %}
+                                                        N/A
+                                                    {% endif %}
+                                                </td>                                                    
+                                                <td><b>
+                                                    {% if i.status == 'Resolved' %}
+                                                        Resolved Comments:
+                                                  
+                                                    {% elif i.status == 'reopen' %}
+                                                        Reopen Comments:
+                                                    {% elif i.status == 'pending' %}
+                                                        Pending Comments:
+                                                    {% elif i.status == 'inprogress' %}
+                                                        Inprogress Comments:
+                                                    {% elif i.status == 'closed' %}
+                                                        Closure Comments:
+                                                    {% elif i.status == 'seek-clarification' %}
+                                                        Resolved Comments:
+                                                    {% else %}
+                                                         Comments:
+                                                    {% endif %}
+                                                    </b><br>
+                                                    {% if i.status == 'Resolved' %}
+                                                        {% if i.resolver_comments %}
+                                                            {% for comment in i.resolver_comments.splitlines %}
+                                                                <div>{{ comment }}</div>
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            No comments available.
+                                                        {% endif %}   
+                                                    {% elif i.status == 'inprogress' %}
+                                                        {% if i.resolver_comments %}
+                                                            {% for comment in i.resolver_comments.splitlines %}
+                                                                <div>{{ comment }}</div>
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            No comments available.
+                                                        {% endif %}                                               
+                                                    {% elif i.status == 'reopen' %}
+                                                        {{ i.reopen_comments }}
+                                                    {% elif i.status == 'pending' %}
+                                                        {% if i.resolver_comments %}
+                                                            {% for comment in i.resolver_comments.splitlines %}
+                                                                <div>{{ comment }}</div>
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            No comments available.
+                                                        {% endif %}
+                                                    {% elif i.status == 'seek-clarification' %}
+                                                        {% if i.resolver_comments %}
+                                                            {% for comment in i.resolver_comments.splitlines %}
+                                                                <div>{{ comment }}</div>
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            No comments available.
+                                                        {% endif %}   
+                                                    {% else %}
+                                                        {{i.closure_comments}}
+                                                    {% endif %}
+                                                </td>                                             
+                                            </tr>
+                                            {% endif %}
+
+
+                                            
+                                            <tr>
+                                                <td><b>Category:</b><br> {{ i.category }}</td>
+                                                <td><b>Subcategory:</b><br> {{ i.subcategory|capfirst }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Short Description:</b><br> {{ i.short_description }}</td>
+
+                                                <td><b>Approval:</b><br> {{ i.approval|default:"None"|title }}</td>
+                                            </tr>
+                                            
+                                            <tr>
+                                                <td colspan="2" style="white-space: normal;"><b>Detailed Description:</b> {{ i.detailed_description }}</td>
+                                            </tr>
+                                           
+                                            
+                                            <tr>
+                                                <td colspan="2">
+                                                    <b>Attachments:</b>
+                                                    {% if i.uploads.exists %}
+                                                    
+                                                    <ul class="scrollable-section">
+                                                        {% for file_upload in i.uploads.all %}
+                                                        <li class="text-nowrap-on-desktop">
+                                                            <a href="{{ file_upload.file.url }}" download="{{ file_upload.file.name }}">
+                                                                <span class="badge badge-success" style="padding: 0rem 0.62rem;"><i class="fa fa-download"></i>&nbsp;Download</span>
+                                                            </a>
+                                                            <a href="{{ file_upload.file.url }}" data-url="{{ file_upload.file.url }}" class="attachment-link">
+                                                                <span>{{ file_upload.file.name }}</span>
+                                                            </a>
+                                                        </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                    {% else %}
+                                                    <p>No files uploaded.</p>
+                                                    {% endif %}
+                                                </td>            
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="2">
+                                                    <a class="btn btn-link" href="javascript:void(0);" id="seekhistory" data-id="{{ i.id }}" >
+                                                        Seek Clarification History
+                                                    </a>
+                                                    <div class="clarification-history" id="clarificationHistory{{ i.id }}" style="display: none;">
+                                                        <div class="card card-body">
+                                                            <h5 class="fw-bold">Clarification History</h5>
+                                                            <div style="font-size: smaller; color: gray;">{{ i.created_at|date:"Y-m-d H:i" }}</div>
+                                            
+                                                            {% if clarification_histories|get_item:i.id|length > 0 %}
+                                                                {% for clarification in clarification_histories|get_item:i.id %}
+                                                                    <div class="border rounded p-3 mb-3" style="border: 1px solid #ddd;">
+                                                                        <strong>{{ i.assignee }}</strong>
+                                                                        <div style="font-size: smaller; color: gray;">{{ clarification.created_at|date:"Y-m-d H:i" }}</div>
+                                                                        <p class="mt-2">{{ clarification.seek_comment }}</p>
+                                            
+                                                                        <h6 class="mt-3">Attachments:</h6>
+                                                                        {% with seek_attachments|get_item:i.id as attachments %}
+                                                                            {% if attachments %}
+                                                                                <ul class="list-unstyled">
+                                                                                    {% for file_upload in attachments %}
+                                                                                        {% if file_upload.clarification_history == clarification %}
+                                                                                            {% if file_upload.clarification_image %}
+                                                                                                <li>
+                                                                                                    <a href="{{ file_upload.clarification_image.url }}" download="{{ file_upload.clarification_image.name }}">
+                                                                                                        <span class="badge bg-success" style="padding: 0rem 0.62rem;">
+                                                                                                            <i class="fa fa-download"></i>&nbsp;Download
+                                                                                                        </span>
+                                                                                                    </a>
+                                                                                                    <a href="{{ file_upload.clarification_image.url }}" data-url="{{ file_upload.clarification_image.url }}" class="attachment-link">
+                                                                                                        <span class="ms-2">{{ file_upload.clarification_image.name }}</span>
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                            {% endif %}
+                                                                                        {% endif %}
+                                                                                    {% endfor %}
+                                                                                </ul>
+                                                                            {% else %}
+                                                                                <p>No attachments available.</p>
+                                                                            {% endif %}
+                                                                        {% endwith %}
+                                            
+                                                                        <h6 class="mt-3">Clarified Comment:</h6>
+                                                                        <p>{{ clarification.clarified_comment|default:"No clarified comment available." }}</p>
+                                            
+                                                                        <h6 class="mt-3">Clarified Attachments:</h6>
+                                                                        {% with seek_attachments|get_item:i.id as attachments %}
+                                                                            {% if attachments %}
+                                                                                <ul class="list-unstyled">
+                                                                                    {% for file_upload in attachments %}
+                                                                                        {% if file_upload.clarification_history == clarification %}
+                                                                                            {% if file_upload.clarified_image %}
+                                                                                                <li>
+                                                                                                    <a href="{{ file_upload.clarified_image.url }}" download="{{ file_upload.clarified_image.name }}">
+                                                                                                        <span class="badge bg-success" style="padding: 0rem 0.62rem;">
+                                                                                                            <i class="fa fa-download"></i>&nbsp;Download
+                                                                                                        </span>
+                                                                                                    </a>
+                                                                                                    <a href="{{ file_upload.clarified_image.url }}" data-url="{{ file_upload.clarified_image.url }}" class="attachment-link">
+                                                                                                        <span class="ms-2">{{ file_upload.clarified_image.name }}</span>
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                            {% endif %}
+                                                                                        {% endif %}
+                                                                                    {% endfor %}
+                                                                                </ul>
+                                                                            {% else %}
+                                                                                <p>No attachments available.</p>
+                                                                            {% endif %}
+                                                                        {% endwith %}
+                                                                    </div>
+                                                                {% endfor %}
+                                                            {% else %}
+                                                                <p>No clarification history available.</p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                            
+                                                    <a class="btn btn-link float-end" href="javascript:void(0);" id="trackinghistory" data-id="{{i.id}}" >
+                                                        Tracking History
+                                                    </a>
+                                                    <div class="tracking-history" id="trackingHistory{{ i.id }}" style="display: none;">
+                                                        <div class="container">
+                                                            <div class="row justify-content-center"> <!-- Center the gray box -->
+                                                                <div class="col-10 col-md-12 hh-grayBox pt45 pb20">
+                                                                    <div class="row justify-content-between">
+                                                                        {% for status_history in tickets_status_history|get_item:i.id %}
+                                                                            <div class="order-tracking 
+                                                                                {% if forloop.last %} completed
+                                                                                {% else %} faded completed
+                                                                                {% endif %}">
+                                                                                <span class="is-complete"></span>
+                                                                                <p class="status-history">
+                                                                                    <span class="status-tooltip" 
+                                                                                          data-tooltip="{{ status_history.changed_at|date:'j M, H:i' }}-{{ status_history.changed_by|capfirst }}">
+                                                                                        {{ status_history.status|capfirst }}
+                                                                                    </span>
+                                                                                </p>
+                                                                            </div>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                </td>
+                                            </tr>
+                                            
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                          
+                            
+                        </div>
+                    </div>
+                </div>
+                
+            {% endfor %}
+            
+
+            </div>
+        </div>
+       </div>
+    
+    
+    {% for item in all_items %}
+    {% if item.status in 'open assigned reopen' %}
+        <div class="modal fade" id="ticketModal{{ item.id }}" tabindex="-1" aria-labelledby="ticketModalLabel{{ item.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ticketModalLabel{{ item.id }}">
+                            {% if item.status == 'assigned' %}
+                                Reassign Ticket
+                            {% else %}
+                                Assign Ticket
+                            {% endif %}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'assign_ticket' id=item.id %}">
+                            {% csrf_token %}
+                            <p><b>Ticket Number:</b> {{ item.id|dynamic_zfill:item.store_code }}</p>
+                            <div class="mb-3">
+                                <label for="assigneeSelect{{ item.id }}" class="form-label">Assignee:</label>
+                                <select class="form-select" id="assigneeSelect{{ item.id }}" name="assignee">
+                                    <option value="" {% if not item.assignee %}selected{% endif %} disabled>Select an engineer</option>
+                                    {% for engineer_data in engineer_data %}
+                                        <option value="{{ engineer_data.engineer.id }}" {% if item.assignee and item.assignee.id == engineer_data.engineer.id %}selected{% endif %}>
+                                            {{ engineer_data.engineer.username }} ({{ engineer_data.assigned_tickets_count }} tickets)
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">
+                                    {% if item.status == 'assigned' %}
+                                        Reassign
+                                    {% else %}
+                                        Assign
+                                    {% endif %}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}
+
+    
+{% if messages %}
+    <script nonce="{{ csp_nonce }}" src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script nonce="{{ csp_nonce }}">
+        document.addEventListener('DOMContentLoaded', function() {
+            {% for message in messages %}
+                const messageData = JSON.parse('{{ message|escapejs }}');  // Parse the JSON data
+                const messageType = messageData.type;  // Extract the message type
+                const text = messageData.text;  // Extract the message text
+                
+                if (messageType === 'success') {
+                    Swal.fire({
+                        title: 'Ticket Assigned Successfully',  // Use a static title for success
+                        text: text,  // Use the dynamic text
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false,
+                        backdrop: true
+                    }).then(function(result) {
+                        if (result.isConfirmed) {
+                            window.location.href = "{% url 'manager_alltickets' %}";  // Redirect URL after confirmation
+                        }
+                    });
+                } else if (messageType === 'error') {
+                    Swal.fire({
+                        title: text,  // Use a static title for error
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false,
+                        backdrop: true
+                    });
+                }
+            {% endfor %}
+        });
+    </script>
+{% endif %}
+<script nonce="{{ csp_nonce }}">
+    function toggleClarificationHistory(ticketId) {
+        const clarificationHistoryDiv = document.getElementById(`clarificationHistory${ticketId}`);
+        if (clarificationHistoryDiv.style.display === "none") {
+            clarificationHistoryDiv.style.display = "block";
+        } else {
+            clarificationHistoryDiv.style.display = "none";
+        }
+    }
+    function toggleHistory(ticketId, type) {
+        const historyDiv = document.getElementById(`${type}History${ticketId}`);
+        historyDiv.style.display = (historyDiv.style.display === "none") ? "block" : "none";
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const buttons = document.querySelectorAll('#seekhistory');
+   
+        buttons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent the default anchor behavior
+                const userId = button.getAttribute('data-id');
+                toggleHistory(userId, 'clarification');            
+                });
+        });
+    }); 
+    document.addEventListener('DOMContentLoaded', () => {
+        const buttons = document.querySelectorAll('#trackinghistory');
+   
+        buttons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent the default anchor behavior
+                const userId = button.getAttribute('data-id');
+                toggleHistory(userId, 'tracking');            
+                });
+        });
+    });
+</script>   
+
+{% endblock %} 
+
+      

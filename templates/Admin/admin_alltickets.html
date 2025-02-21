@@ -1,0 +1,357 @@
+{% extends 'Admin/admin_header.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<style>
+    @media (max-width: 767px) {
+
+        .text-nowrap-on-desktop {
+
+            white-space: normal !important;
+
+        }
+
+    }
+
+
+
+    @media (min-width: 768px) {
+
+        .text-nowrap-on-desktop {
+
+            white-space: nowrap !important;
+
+        }
+
+    }
+
+    .modal-header {
+        background-color: #61b9b5;
+        color: #fff;
+    }
+
+    /* Style the modal title */
+    .modal-title {
+        font-size: 24px;
+    }
+
+    /* Style the Close button */
+    .btn-close {
+        color: #fff;
+    }
+
+    /* Style the modal body and rows */
+    .modal-body {
+        padding: 20px;
+    }
+
+    .row {
+        margin-bottom: 15px;
+    }
+
+    /* Style the labels and data in the modal */
+    p b {
+        font-weight: bold;
+    }
+
+    /* Style the badge for the status */
+    .badge {
+        font-size: 14px;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    /* Style the scrollable sections */
+    .scrollable-section {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        width: 730px;
+    }
+
+    /* Style the attachment links */
+    .attachment-link {
+        color: #007bff;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+
+    .table th,
+    .table td {
+        border: 1px solid #c9c9c9de;
+        padding: 8px;
+    }
+</style>
+
+
+<div class="content-body">
+    <div class="container-fluid">
+        {% if error_message %}
+        <div class="alert alert-danger">
+            {{ error_message }}
+        </div>
+        {% endif %}
+        <!-- row -->
+        <div class="row">
+            {% for ticket in filtered_tickets %}
+            <div class="col-xl-4 col-xxl-4 col-lg-6 col-sm-6">
+                <div class="widget-stat card ">
+                    <div class="card-body p-4" data-bs-toggle="modal"
+                        data-bs-target="#ticketHistoryModal{{ ticket.id }}">
+
+                        <div class="top-block d-flex align-items-center justify-content-between">
+                            {% if ticket.status == 'open' %}
+                            <span class="badge badge-danger" style="font-size: 10px;">Open</span>
+                            {% elif ticket.status == 'assigned' %}
+                            <span class="badge badge-secondary" style="font-size: 10px;">Assigned</span>
+                            {% elif ticket.status == 'inprogress' %}
+                            <span class="badge badge-info" style="font-size: 10px;">In Progress</span>
+                            {% elif ticket.status == 'pending' %}
+                            <span class="badge badge-warning" style="font-size: 10px;">Pending</span>
+                            {% elif ticket.status == 'closed' %}
+                            <span class="badge badge-success" style="font-size: 10px;">Closed</span>
+                            {% elif ticket.status == 'Resolved' %}
+                            <span class="badge badge-primary" style="font-size: 10px;">Resolved</span>
+                            {% elif ticket.status == 'closed' %}
+                            <span class="badge badge-success" style="font-size: 10px;">Closed</span>
+                            {% elif ticket.status == 'reopen' %}
+                            <span class="badge custom-badge" style="font-size: 10px;background-color: #c60e82; color: white;">Reopen</span>
+                            {% else %}
+                            <span class="badge badge-primary" style="font-size: 10px;">{{ ticket.status }}</span>
+                            {% endif %} <!-- Edit Icon -->
+
+
+                        </div>
+                        <div class="media">
+                            <span class="me-3" style="background-color:rgb(241, 239, 230) ;">
+                                <i class="flaticon-381-calendar-1"></i>
+                            </span>
+                            <div class="media-body text-white">
+                                <p class="mb-1" style="font-size: 14px; color: black;"><b>{{ ticket.id|dynamic_zfill:ticket.store_code }}</b></p>
+                                <p class="" style="font-size: 11px; color: #0d9e97;"><b>{{ ticket.category}}</b></p>
+                                <p class="" style="font-size: 10px; color: black;"><b>Created : {{ticket.created }}</b>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="ticketHistoryModal{{ ticket.id }}" tabindex="-1" aria-labelledby="ticketHistoryModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" >
+                    <div class="modal-content">
+                        <!-- Ticket History Details Here -->
+                        <div class="modal-header">
+                            <div>
+                                <h5 class="modal-title" style="color: #fff;" id="ticketHistoryModalLabel">Ticket History: {{ ticket.id|dynamic_zfill:ticket.store_code }}</h5>
+                                <span class="created-by" style="font-size: 12px;color: #c9fffd;">Ticket Created by <b>{{ticket.created_by}}</b></span>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Display Ticket History Details Here -->
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered" style="border-collapse: revert;">
+                                    <tbody>
+                                        <tr>
+                                            <td><b>Ticket Number:</b><br> {{ ticket.id|dynamic_zfill:ticket.store_code }}</td>
+                                            <td><b>Ticket Created Date:</b><br> {{ ticket.created }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Current Status:</b><br>
+                                                {% if ticket.status == 'open' %}
+                                                <span class="badge badge-danger" style="font-size: 10px;">Open</span>
+                                                {% elif ticket.status == 'inprogress' %}
+                                                <span class="badge badge-info" style="font-size: 10px;">In Progress</span>
+                                                {% elif ticket.status == 'pending' %}
+                                                <span class="badge badge-warning" style="font-size: 10px;">Pending</span>
+                                                {% elif ticket.status == 'closed' %}
+                                                <span class="badge badge-success" style="font-size: 10px;">Closed</span>
+                                                {% elif ticket.status == 'assigned' %}
+                                                <span class="badge badge-secondary" style="font-size: 10px;">Assigned</span>
+                                                {% elif ticket.status == 'reopen' %}
+                                                <span class="badge custom-badge" style="font-size: 10px; width: 80px;background-color: #c60e82; color: white;">Reopen</span>
+                                                {% elif ticket.status == 'Resolved' %}
+                                                <span class="badge badge-primary custom-badge" style="font-size: 10px; width: 80px;">Resolved</span>
+                                                                                           
+                                                {% else %}
+                                                <span class="badge badge-primary" style="font-size: 10px;">{{ ticket.status }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td><b>Raised by:</b><br> {{ticket.store_code}}</td>
+                                        </tr>
+                                        {% if ticket.status != 'open' and  ticket.status != 'reopen' %}
+                                        <tr>
+                                            <td><b>Assigned Engineer:</b><br> {{ ticket.assignee }}</td>
+
+                                            <td><b>Ticket Assigned Date:</b><br> {{ ticket.assigned_date }}</td>
+                                                                                 
+                                        </tr>
+                                        {% endif %} 
+
+                                        {% if ticket.status == 'reopen' %}
+
+                                        <tr>
+                                            <td><b>Resolved Date:</b><br> {{ ticket.resolved_date }}</td>
+
+                                            <td><b>Resolver Comments:</b><br> {{ ticket.resolver_comments }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        
+                                        {% if ticket.status != 'open' and ticket.status != 'assigned'  %}
+                                        <tr>
+                                               
+                                            <td><b>
+                                                {% if ticket.status == 'Resolved' %}
+                                                    Resolved Date:
+                                                {% elif ticket.status == 'closed' %}
+                                                    Ticket Closed Date:
+                                                {% elif ticket.status == 'pending' %}
+                                                    Ticket Pending Date:
+                                                {% elif ticket.status == 'inprogress' %}
+                                                    Ticket Inprogress Date:
+                                                {% elif ticket.status == 'reopen' %}
+                                                    Ticket Reopen Date:
+                                                {% elif ticket.status == 'seek-clarification' %}
+                                                    Ticket status Changed Date:
+                                                {% else %}
+                                                    Ticket Closed Date:
+                                                {% endif %}
+                                                </b><br>
+                                                {% if ticket.status == 'Resolved' %}
+                                                    {{ ticket.resolved_date }}
+                                                {% elif ticket.status == 'closed' %}
+                                                    {{ ticket.closed_date }}
+                                                {% elif ticket.status == 'pending' %}
+                                                    {{ ticket.status_changed_date }}
+                                                {% elif ticket.status == 'inprogress' %}
+                                                    {{ ticket.status_changed_date }}
+                                                {% elif ticket.status == 'reopen' %}
+                                                    {{ ticket.reopen_date }}
+                                                {% elif ticket.status == 'seek-clarification' %}
+                                                    {{ ticket.status_changed_date }}
+                                             
+                                                {% else %}
+                                                    N/A
+                                                {% endif %}
+                                            </td>                                                    
+                                            <td><b>
+                                                {% if ticket.status == 'Resolved' %}
+                                                    Resolved Comments:
+                                              
+                                                {% elif ticket.status == 'reopen' %}
+                                                    Reopen Comments:
+                                                {% elif ticket.status == 'pending' %}
+                                                    Pending Comments:
+                                                {% elif ticket.status == 'inprogress' %}
+                                                    Inprogress Comments:
+                                                {% elif ticket.status == 'closed' %}
+                                                    Closure Comments:
+                                                {% elif ticket.status == 'seek-clarification' %}
+                                                    Resolved Comments:
+                                                {% else %}
+                                                     Comments:
+                                                {% endif %}
+                                                </b><br>
+                                                {% if ticket.status == 'Resolved' %}
+                                                    {% if ticket.resolver_comments %}
+                                                        {% for comment in ticket.resolver_comments.splitlines %}
+                                                            <div>{{ comment }}</div>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        No comments available.
+                                                    {% endif %}   
+                                                {% elif ticket.status == 'inprogress' %}
+                                                    {% if ticket.resolver_comments %}
+                                                        {% for comment in ticket.resolver_comments.splitlines %}
+                                                            <div>{{ comment }}</div>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        No comments available.
+                                                    {% endif %}                                               
+                                                {% elif ticket.status == 'reopen' %}
+                                                    {{ ticket.reopen_comments }}
+                                                {% elif ticket.status == 'pending' %}
+                                                    {% if ticket.resolver_comments %}
+                                                        {% for comment in ticket.resolver_comments.splitlines %}
+                                                            <div>{{ comment }}</div>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        No comments available.
+                                                    {% endif %}
+                                                {% elif ticket.status == 'seek-clarification' %}
+                                                    {% if ticket.resolver_comments %}
+                                                        {% for comment in ticket.resolver_comments.splitlines %}
+                                                            <div>{{ comment }}</div>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        No comments available.
+                                                    {% endif %}   
+                                                {% else %}
+                                                    {{ticket.closure_comments}}
+                                                {% endif %}
+                                            </td>                                             
+                                        </tr>
+                                        {% endif %}
+
+
+                                        
+                                        <tr>
+                                            <td><b>Category:</b><br> {{ ticket.category }}</td>
+                                            <td><b>Subcategory:</b><br> {{ ticket.subcategory|capfirst }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Short Description:</b><br> {{ ticket.short_description }}</td>
+
+                                            <td><b>Approval:</b><br> {{ ticket.approval|default:"None"|title }}</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td colspan="2" style="white-space: normal;"><b>Detailed Description:</b> {{ ticket.detailed_description }}</td>
+                                        </tr>
+                                       
+                                        
+                                        <tr>
+                                            <td colspan="2">
+                                                <b>Attachments:</b>
+                                                {% if ticket.uploads.exists %}
+                                                
+                                                <ul class="scrollable-section">
+                                                    {% for file_upload in ticket.uploads.all %}
+                                                    <li class="text-nowrap-on-desktop">
+                                                        <a href="{{ file_upload.file.url }}" download="{{ file_upload.file.name }}">
+                                                            <span class="badge badge-success" style="padding: 0rem 0.62rem;"><i class="fa fa-download"></i>&nbsp;Download</span>
+                                                        </a>
+                                                        <a href="{{ file_upload.file.url }}" data-url="{{ file_upload.file.url }}" class="attachment-link">
+                                                            <span>{{ file_upload.file.name }}</span>
+                                                        </a>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                                {% else %}
+                                                <p>No files uploaded.</p>
+                                                {% endif %}
+                                            </td>            
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                      
+                        
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </div>
+
+
+    </div>
+</div>
+
+{% endblock %}

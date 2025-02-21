@@ -1,0 +1,203 @@
+{% extends 'Admin/admin_header.html' %}
+{% load static %}
+{% block content %}
+
+    <style>
+        .form-group .input-group input,
+    .form-group .input-group select {
+        width: 44%;
+        border-color: gray; /* Replace with your desired color */
+    }
+	
+	</style>
+
+		
+        <div class="content-body">
+            <div class="container-fluid">
+				
+                <!-- row -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">{% if user_id %}Edit Non-AD User{% else %}Create Non-AD User{% endif %}</h4> 
+                            </div>
+                            <div class="card-body">
+                                <div class="basic-form">
+                                   
+                                      <form class="form-valide-with-icon" id="registration-form" method="post" 
+                                action="{% if user_id %}
+                                         {% url 'edit_non_ad_user' user_id=user_id %}
+                                       {% endif %}"> 
+                                        {% csrf_token %}
+                
+                                        <!-- Row 1 -->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="text-label form-label" for="id_username">Username <span class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                                                        <input type="text" class="form-control" id="id_username" name="username" placeholder="Enter a username.." required value="{{ form.initial.username }}"> 
+                                                    </div>
+                                                    <div class="text-danger" style="font-size: 14px;">{{ form.username.errors }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="text-label form-label" for="id_email">Email Address <span class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
+                                                        <input type="email" class="form-control" id="id_email" name="email" placeholder="Enter your email address.." required value="{{ form.initial.email }}"> 
+                                                    </div>
+                                                    <div class="text-danger" style="font-size: 14px;">{{ form.email.errors }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                
+                                        <!-- Row 2 -->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {% if user_id %}
+                                                    <label class="text-label form-label" for="validationCustomConfirmPassword">New Password (optional)</label>
+                                                {% else %}
+                                                    <label class="text-label form-label" for="validationCustomConfirmPassword">Password <span class="text-danger">*</span></label>
+                                                {% endif %}                                                    <div class="input-group transparent-append">
+                                                        <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                                                        <input type="password" class="form-control" id="id_password1" name="password1" placeholder="Enter new password">
+                                                        <span class="input-group-text show-pass border-left-end">
+                                                            <i class="fa fa-eye-slash"></i>
+                                                        </span>
+                                                    </div>
+                                                    <div class="text-danger" style="font-size: 14px;">{{ form.password1.errors }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {% if user_id %}
+                                                    <label class="text-label form-label" for="validationCustomConfirmPassword">Confirm New Password (optional)</label>
+                                                {% else %}
+                                                    <label class="text-label form-label" for="validationCustomConfirmPassword">Confirm Password <span class="text-danger">*</span></label>
+                                                {% endif %}
+                                                                                                        <div class="input-group transparent-append">
+                                                        <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                                                        <input type="password" class="form-control" id="id_password2" name="password2" placeholder="Confirm new password">
+                                                        <span class="input-group-text show-pass border-left-end">
+                                                            <i class="fa fa-eye-slash"></i>
+                                                        </span>
+                                                    </div>
+                                                    <div class="text-danger" style="font-size: 14px;">{{ form.password2.errors }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+            
+                                        <div class="form-group">
+                                            <label class="text-label form-label" for="id_groups">Group <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                                                <select class="form-control" id="id_groups" name="groups" required>
+                                                    <option value="">Select an option...</option>
+                                                    {% for group in form.groups.field.queryset %}
+                                                        <option value="{{ group.id }}" {% if group in form.initial.groups %}selected{% endif %}>{{ group.name }}</option> 
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="text-center">
+                                            <button type="submit" class="btn me-2 btn-primary">Submit</button>
+                                            <button type="reset" class="btn btn-light">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+            </div>
+        </div>
+
+
+
+	<script nonce="{{ csp_nonce }}" >
+		(function () {
+		  'use strict'
+
+		  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+		  var forms = document.querySelectorAll('.needs-validation')
+
+		  // Loop over them and prevent submission
+		  Array.prototype.slice.call(forms)
+			.forEach(function (form) {
+			  form.addEventListener('submit', function (event) {
+				if (!form.checkValidity()) {
+				  event.preventDefault()
+				  event.stopPropagation()
+				}
+
+				form.classList.add('was-validated')
+			  }, false)
+			})
+		})()
+	</script>
+<script nonce="{{ csp_nonce }}" >
+    // Get references to the password and confirm password fields
+    var passwordField = document.getElementById('id_password1');
+    var confirmPasswordField = document.getElementById('id_password2');
+
+    // Function to validate whether the passwords match
+    function validatePassword() {
+        if (passwordField.value !== confirmPasswordField.value) {
+            confirmPasswordField.setCustomValidity("Passwords do not match");
+        } else {
+            confirmPasswordField.setCustomValidity('');
+        }
+    }
+
+    // Add an event listener to check password match on input change
+    passwordField.addEventListener('input', validatePassword);
+    confirmPasswordField.addEventListener('input', validatePassword);
+</script>
+
+<script nonce="{{ csp_nonce }}" >
+    // Function to toggle password visibility
+    function togglePasswordVisibility(inputField, eyeIcon) {
+        const type = inputField.getAttribute('type');
+        if (type === 'password') {
+            inputField.setAttribute('type', 'text');
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        } else {
+            inputField.setAttribute('type', 'password');
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        }
+    }
+
+    // Add event listeners to the eye icons
+    document.querySelector('#id_password1 + .input-group-text .fa').addEventListener('click', function () {
+        const inputField = document.getElementById('id_password1');
+        togglePasswordVisibility(inputField, this);
+    });
+
+    document.querySelector('#id_password2 + .input-group-text .fa').addEventListener('click', function () {
+        const inputField = document.getElementById('id_password2');
+        togglePasswordVisibility(inputField, this);
+    });
+</script>
+<script nonce="{{ csp_nonce }}" >
+    document.getElementById('id_groups').addEventListener('change', function () {
+        var storeCodeField = document.getElementById('store_code_field');
+        if (this.value === 'StorePerson') {
+            storeCodeField.style.display = 'block';
+        } else {
+            storeCodeField.style.display = 'none';
+        }
+    });
+</script>
+
+{% endblock %}

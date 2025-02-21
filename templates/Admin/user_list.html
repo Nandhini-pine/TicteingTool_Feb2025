@@ -1,0 +1,158 @@
+{% extends 'Admin/admin_header.html' %}
+{% load static %}
+
+{% block content %}
+	
+	<style>
+		/* Add space between the border above and below each table row */
+		.ticket-table table tbody tr {
+			border-top: 1px solid #ddd; /* Border above the row */
+			border-bottom: 1px solid #ddd; /* Border below the row */
+			margin-top: 5px; /* Space above the row */
+			margin-bottom: 5px; /* Space below the row */
+		}
+		th{
+			font-size: 1.1rem;
+		}
+		.btn-sm, .btn-group-sm > .btn {
+			font-size: 0.813rem !important;
+			padding: 0.122rem 1rem;
+		}
+	</style>
+
+	<div class="content-body">
+		<!-- row -->
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-header flex-wrap">
+							<h4 class="card-title">Users List</h4>
+							<a href="{% url 'create_non_ad_user' %}" class="btn btn-primary me-3 mt-2 mt-sm-0"><i class="feather feather-user-plus"></i> Add Users</a>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive ticket-table">
+								<table id="example" class="display dataTablesCard table-responsive-xl" style="min-width: 845px">
+									<thead>
+										<tr>
+											<th>Name</th>
+											<th style="padding:5px;">Is superuser</th>
+											<th>User Type</th>
+											<th>Last Login</th>
+											<th>Date Joined</th>
+											<th>Status</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for user in users %}
+										{% if user.is_active %}
+										<tr>
+											<td>
+												<div>
+													<a href="#" class="h5">{{user.username}}</a>
+												</div>
+												<small class="fs-12 text-muted"> <span class="font-weight-normal1">{{user.email}}</span></small>
+											</td>
+											<td style="padding:5px;">
+												{% if user.is_superuser %}
+													<span class="superuser-status">Superuser</span>
+												{% else %}
+													Staff User
+												{% endif %}
+											</td>
+											<td>
+												{% for group in user.groups.all %}
+													{{ group.name }}{% if not forloop.last %}, {% endif %}
+												{% empty %}
+													No groups
+												{% endfor %}
+											</td>
+											<td>
+												<span class="badge light badge-success">{{user.last_login}}</span>
+											</td>
+											<td>
+												<span class="badge light badge-danger">{{user.date_joined}}</span>
+											</td>
+											<td>
+												<span class="badge badge-success">Active</span>
+											</td>
+											<td>
+												{% if user.usertype.user_type == 'ad' %}
+													<a href="{% url 'edit_ad_user' user_id=user.id %}" class="btn btn-info btn-sm" title="Edit User">
+														<i class="fas fa-edit"></i> 
+													</a>
+												{% elif user.usertype.user_type == 'non_ad' %}
+													<a href="{% url 'edit_non_ad_user' user_id=user.id %}" class="btn btn-info btn-sm" title="Edit User">
+														<i class="fas fa-edit"></i> 
+													</a>
+												{% endif %}
+												&nbsp; <!-- Adds space between the icons -->
+												<a href="#" class="btn btn-danger btn-sm" id="confirmuserdelete" data-is="{{user.id}}" title="Deactivate">
+													<i class="fas fa-user-slash"></i> 
+												</a>
+											</td>
+										</tr>
+										{% endif %}
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Custom Modal for User Deactivation -->
+	<div class="modal fade" id="deactivateUserModal" tabindex="-1" role="dialog" aria-labelledby="deactivateUserModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="deactivateUserModalLabel">Deactivate User</h5>
+					<button type="button" class="close" id="closeModal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					Are you sure you want to deactivate this user?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" id="cancelModal">Cancel</button>
+					<button type="button" class="btn btn-danger" id="confirmDeactivate">Deactivate</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script nonce="{{ csp_nonce }}">
+		document.addEventListener('DOMContentLoaded', () => {
+			let userIdToDeactivate = null;
+
+			const buttons = document.querySelectorAll('#confirmuserdelete');
+			buttons.forEach(button => {
+				button.addEventListener('click', (event) => {
+					event.preventDefault(); // Prevent the default anchor behavior
+					userIdToDeactivate = button.getAttribute('data-is');
+					$('#deactivateUserModal').modal('show');
+				});
+			});
+
+			document.getElementById('confirmDeactivate').addEventListener('click', () => {
+				if (userIdToDeactivate) {
+					window.location.href = "{% url 'user_delete' 0 %}".replace('0', userIdToDeactivate);
+				}
+			});
+
+			document.getElementById('closeModal').addEventListener('click', () => {
+				$('#deactivateUserModal').modal('hide');
+			});
+
+			document.getElementById('cancelModal').addEventListener('click', () => {
+				$('#deactivateUserModal').modal('hide');
+			});
+		});
+	</script>
+
+{% endblock %}

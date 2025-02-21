@@ -1,0 +1,234 @@
+{% extends 'Admin/admin_header.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="content-body">
+	<div class="container-fluid">
+
+		
+		<!-- row -->
+		<div class="row">
+			
+			<div class="widget-stat card" style="background-color:#61B9B5;">
+				<a href="{% url 'admin_all_tickets' %}" class="text-decoration-none">
+					<div class="card-body text-center p-2">
+						<p class="mb-1 text-white">TOTAL TICKETS</p>
+						<h3 class="text-white" style="font-size: 34px;">{{overall_tickets_count}}</h3>
+					</div>
+				</a>
+			</div>
+			
+			
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'admin_all_tickets' %}?status=open" class="text-decoration-none">
+
+				<div class="widget-stat card bg-danger">
+					<div class="card-body  p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white text-end">
+								<p class="mb-1">Open</p>
+								<h3 class="text-white">{{open_tickets}}</h3>
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'admin_all_tickets' %}?status=seek-clarification" class="text-decoration-none">
+
+				<div class="widget-stat card bg-dark">
+					<div class="card-body  p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white text-end">
+								<p class="mb-1">Seek Clarify</p>
+								<h3 class="text-white">{{seek_clarification_tickets}}</h3>
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'admin_all_tickets' %}?status=assigned" class="text-decoration-none">
+
+				<div class="widget-stat card bg-primary">
+					<div class="card-body  p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white text-end">
+								<p class="mb-1">Assigned</p>
+								<h3 class="text-white">{{assigned_tickets}}</h3>
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			
+			
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'admin_all_tickets' %}?status=inprogress" class="text-decoration-none">
+
+				<div class="widget-stat card bg-info">
+					<div class="card-body  p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white text-end">
+								<p class="mb-1">Inprogress</p>
+								<h3 class="text-white">{{inprogress_tickets}}</h3>
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'admin_all_tickets' %}?status=pending" class="text-decoration-none">
+
+				<div class="widget-stat card bg-warning">
+					<div class="card-body  p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white text-end">
+								<p class="mb-1">Pending</p>
+								<h3 class="text-white">{{pending_tickets}}</h3>
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'admin_all_tickets' %}?status=Resolved" class="text-decoration-none">
+
+				<div class="widget-stat card bg-secondary">
+					<div class="card-body p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white text-end">
+								<p class="mb-1">Resolved</p>
+								<h3 class="text-white">{{resolved_tickets}}</h3>
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'admin_all_tickets' %}?status=reopen" class="text-decoration-none">
+
+				<div class="widget-stat card bg-danger">
+					<div class="card-body p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white text-end">
+								<p class="mb-1">Re-Open</p>
+								<h3 class="text-white">{{reopen_tickets}}</h3>
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'admin_all_tickets' %}?status=closed" class="text-decoration-none">
+
+				<div class="widget-stat card bg-success">
+					<div class="card-body p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white text-end">
+								<p class="mb-1">Closed</p>
+								<h3 class="text-white">{{closed_tickets}}</h3>
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			
+			
+			
+			
+		
+			<div class="col-xl-12 col-lg-12 col-xxl-12 col-sm-12">
+				<div class="card">
+					<div class="card-header">
+						<h4 class="card-title">Recent Tickets</h4>
+					</div>
+					<div class="card-body">
+						<div class="table-responsive recentOrderTable">
+							<table class="table verticle-middle table-responsive-md">
+								<thead>
+									<tr>
+										<th scope="col">S.No</th>
+										<th scope="col">Category Name</th>
+										<th scope="col">Subcategory Name</th>
+										<th scope="col">Ticket no</th>
+										<th scope="col">Created At</th>
+										<th scope="col">Status Changed At</th>
+										<th scope="col">Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for i in recent_tickets|slice:":10" %}
+										<tr>
+											<td>{{ forloop.counter }}</td>
+											<td>{{ i.category }}</td>
+											<td>{{ i.subcategory }}</td>
+											<td>{{ i.id|dynamic_zfill:i.store_code }}</td>
+											<td>{{ i.created }}</td>   
+											<td>{{ i.status_changed_date }}</td>                                                
+											 <td>
+												{% if i.status == 'open' %}
+													<span class="badge badge-success" style="font-size: 10px;">Open</span>
+												{% elif i.status == 'inprogress' %}
+													<span class="badge badge-info" style="font-size: 10px;">In Progress</span>
+												{% elif i.status == 'pending' %}
+													<span class="badge badge-warning" style="font-size: 10px;">Pending</span>
+												{% elif i.status == 'closed' %}
+													<span class="badge badge-danger" style="font-size: 10px;">Closed</span>
+												{% elif i.status == 'Assigned' %}
+													<span class="badge badge-secondary" style="font-size: 10px;">Assigned</span>
+												{% else %}
+													<span class="badge badge-primary" style="font-size: 10px;">{{ i.status }}</span>
+												{% endif %}
+											</td>
+										</tr>
+									{% endfor %}
+									
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+		</div>
+		
+	
+	
+</div>
+</div>
+{% endblock %}

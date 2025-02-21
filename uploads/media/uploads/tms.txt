@@ -1,0 +1,7 @@
+32 warehouse - each login users (maybe 40 or 80 we can add)-CFA users
+admin provissions - they can create warehouse users (super admin is IT person(saravanan and sivakumar))
+Transporter login -Logistics Partners are totally 10 or more than 10 ( authorized and unauthorized)
+
+
+
+

@@ -1,0 +1,1091 @@
+{% extends 'Engineer/engineer_header.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+    
+<style>
+	
+
+/* Add this CSS to your stylesheet or in a <style> tag in your HTML template */
+    .popup {
+    display: none; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background overlay */
+    z-index: 1000; /* Ensure the popup is above other elements */
+}
+
+.popup-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: 300px; /* Adjust the width as needed */
+    text-align: center;
+}
+
+.close-popup {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+}
+
+
+/* Add this CSS to your stylesheet or in a <style> tag in your HTML template */
+    .success {
+    color: #2196F3; /* Green for success messages */
+}
+
+.info {
+    color: #132330; /* Blue for info messages */
+}
+
+.warning {
+    color: #FF9800; /* Orange for warning messages */
+}
+
+.error {
+    color: #F44336; /* Red for error messages */
+}
+@media (max-width: 767px) {
+
+.text-nowrap-on-desktop {
+
+    white-space: normal !important;
+
+}
+
+}
+
+
+
+@media (min-width: 768px) {
+
+.text-nowrap-on-desktop {
+
+    white-space: nowrap !important;
+
+}
+
+}
+
+#gfg {
+            color: green;
+            font-size: large;
+        }
+        .modal-header {
+        background-color: #61b9b5;
+        color: #fff;
+    }
+
+    /* Style the modal title */
+    .modal-title {
+        font-size: 24px;
+    }
+
+    /* Style the Close button */
+    .btn-close {
+        color: #fff;
+    }
+
+    /* Style the modal body and rows */
+    .modal-body {
+        padding: 20px;
+    }
+
+    .row {
+        margin-bottom: 15px;
+    }
+
+    /* Style the labels and data in the modal */
+    p b {
+        font-weight: bold;
+    }
+
+    /* Style the badge for the status */
+    .badge {
+        font-size: 14px;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    /* Style the scrollable sections */
+    .scrollable-section {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        width:730px;
+    }
+
+    /* Style the attachment links */
+    .attachment-link {
+        color: #007bff;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+    .table th, .table td {
+                                    border: 1px solid #c9c9c9de;
+                                    padding: 8px;
+                                }
+
+                                .widget-stat {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .widget-stat:hover .card-body {
+        filter: blur(5px);
+    }
+
+    .widget-stat:hover .action-buttons {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .action-buttons {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        gap: 10px;
+    }
+
+    .action-buttons a {
+        background-color: #FF6175; /* Bootstrap primary color */
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .action-buttons a:hover {
+        background-color: #f45a6f; /* Darker shade of primary color */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .action-buttons a:active {
+        background-color: #f45a6f; /* Even darker shade */
+    }
+    #attachments-preview {
+    margin-top: 10px;
+}
+
+#attachments-preview a {
+    color: rgb(249, 251, 252);
+    text-decoration: underline;
+    margin-right: 5px; 
+}
+
+#attachments-preview button {
+    background-color: transparent;
+    cursor: pointer;
+}
+.existing-comments {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.existing-comments h5 {
+    font-weight: bold;
+    color: #343a40;
+}
+
+.existing-comments pre {
+    white-space: pre-wrap; /* Allow wrapping */
+    word-wrap: break-word; /* Break long words */
+    color: #495057; /* Text color */
+    font-size: 0.875rem; /* Font size */
+    line-height: 1.5; /* Line height */
+}
+
+
+</style>
+
+
+
+
+
+<div class="content-body">
+
+    <div class="container-fluid">
+        {% if messages %}
+        <div style="text-align: center;">
+            {% for message in messages %}
+                {% if 'forward_mail_pending' in message.tags %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-danger{% endif %}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    
+    
+
+        {% if assigned_tickets %}
+        <div class="row">
+            {% for i in filtered_tickets %}
+            <div class="col-xl-4 col-xxl-4 col-lg-6 col-sm-6">
+                <div class="widget-stat card">
+                    <div class="card-body p-4" >
+                        <div class="top-block d-flex align-items-center justify-content-between">
+                            {% if i.status == 'assigned' %}
+                                <span class="badge badge-secondary" style="font-size: 10px;">Pick</span>
+                            {% elif i.status == 'inprogress' %}
+                                <span class="badge badge-info" style="font-size: 10px;">In Progress</span>
+                            {% elif i.status == 'pending' %}
+                                <span class="badge badge-warning" style="font-size: 10px;">Pending</span>
+                            {% elif i.status == 'closed' %}
+                                <span class="badge badge-danger" style="font-size: 10px;">Closed</span>
+                            {% elif i.status == 'Resolved' %}
+                                <span class="badge badge-success" style="font-size: 10px;">Resolved</span>
+                            {% elif i.status == 'seek-clarification' %}
+                                <span class="badge badge-dark" style="font-size: 10px;">Seek-Clarification</span>
+                            {% else %}
+                                <span class="badge badge-secondary" style="font-size: 10px;">{{ i.status }}</span>
+                            {% endif %}
+                            <div >
+                                {% if i.status == 'open' %}
+                                    <i class="fa fa-hand-paper-o" style="font-size: 20px; color: #05645f;"></i>
+                                {% elif i.status == 'assigned' %}
+                                    <i class="fa fa-rocket" style="font-size: 20px; color: #05645f;"></i>
+                                {% elif i.status == 'inprogress' %}
+                                    <i class="fa fa-spinner" style="font-size: 20px; color: #05645f;"></i>
+                                {% elif i.status == 'pending' %}
+                                    <i class="fa fa-clock" style="font-size: 20px; color: #05645f;"></i>
+                                {% elif i.status == 'closed' %}
+                                    <i class="fa fa-lock" style="font-size: 20px; color: #05645f;"></i>
+                                {% elif i.status == 'Resolved' %}
+                                    <i class="fa fa-lock" style="font-size: 20px; color: #05645f;"></i>
+                                {% elif i.status == 'seek-clarification' %}
+                                    <i class="fa fa-question-circle" style="font-size: 20px; color: #05645f;"></i>
+                                
+                                {% else %}                                    
+                                    <i class="fa fa-question" style="font-size: 20px; color: #007bff;"></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="media">
+                            <span class="me-3" style="background-color:rgb(241, 239, 230);">
+                                <i class="flaticon-381-calendar-1"></i>
+                            </span>
+                            <div class="media-body text-black">
+                                <p class="mb-1" style="font-size: 14px;"><b>{{ i.id|dynamic_zfill:i.store_code }}</b></p>
+                                <p style="font-size: 11px;"><b>{{ i.category }}</b></p>
+                                <p style="font-size: 10px;"><b>Created: {{ i.created }}</b></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        {% if i.status == 'assigned' %}
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#ticketModal_{{ i.id }}">Pick</a>
+                        {% endif %}
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#ticketHistoryModal{{ i.id }}">History</a>
+                        {% if i.status == 'pending' or i.status == 'inprogress' %}
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#ticketModal_{{ i.id }}">Change</a>
+                        {% endif %}
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Modal for Ticket Details -->
+            {% if i.status != 'Resolved' and i.status != 'closed' %}
+            <div class="modal fade" id="ticketModal_{{ i.id }}" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div>
+                                <h5 class="modal-title" style="color: #fff;" id="ticketModalLabel">Update Ticket Status</h5>
+                                <span class="created-by" style="font-size: 12px; color: #c9fffd;">Ticket Created by <b>{{ i.created_by }}</b></span>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Ticket Details -->
+                            <table class="table table-bordered" style="border-collapse: revert;">
+                                <tbody>
+                                    <tr>
+                                        <td><b>Ticket Number:</b><br> {{ i.id|dynamic_zfill:i.store_code }}</td>
+                                        <td><b>Ticket Created Date:</b><br> {{ i.created }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Ticket Assigned Date:</b><br> {{ i.assigned_date }}</td>
+                                        <td><b>Ticket Resolved Date:</b><br> {{ i.resolved_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Current Status:</b>
+                                            {% if i.status == 'open' %}
+                                                <span class="badge badge-success" style="font-size: 10px;">Open</span>
+                                            {% elif i.status == 'inprogress' %}
+                                                <span class="badge badge-info" style="font-size: 10px;">In Progress</span>
+                                            {% elif i.status == 'pending' %}
+                                                <span class="badge badge-warning" style="font-size: 10px;">Pending</span>
+                                            {% elif i.status == 'closed' %}
+                                                <span class="badge badge-danger" style="font-size: 10px;">Closed</span>
+                                            {% elif i.status == 'assigned' %}
+                                                <span class="badge badge-secondary" style="font-size: 10px;">Assigned</span>
+                                            {% elif i.status == 'seek-clarification' %}
+                                                <span class="badge badge-dark" style="font-size: 10px;">Seek-Clarification</span>
+                                            {% else %}
+                                                <span class="badge badge-primary" style="font-size: 10px;">{{ i.status }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td><b>Raised by:</b><br> {{ i.store_code }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Category:</b><br> {{ i.category }}</td>
+                                        <td><b>Subcategory:</b><br> {{ i.subcategory }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Assigned Engineer:</b><br> {{ i.assignee }}</td>
+                                        <td><b>Approval :</b><br> {{ i.approval }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="white-space: normal;"><b>Short Description:</b> {{ i.short_description }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="white-space: normal;"><b>Detailed Description:</b> {{ i.detailed_description }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <b>Attachments:</b>
+                                            {% if i.uploads.exists %}
+                                                <ul class="scrollable-section">
+                                                    {% for file_upload in i.uploads.all %}
+                                                        <li class="text-nowrap-on-desktop">
+                                                            <a href="{{ file_upload.file.url }}" download="{{ file_upload.file.name }}">
+                                                                <span class="badge badge-success" style="padding: 0rem 0.62rem;"><i class="fa fa-download"></i>&nbsp;Download</span>
+                                                            </a>
+                                                            <a href="{{ file_upload.file.url }}" data-url="{{ file_upload.file.url }}" class="attachment-link" target="_blank">
+                                                                <span>{{ file_upload.file.name }}</span>
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% else %}
+                                                <p>No files uploaded.</p>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <form method="post" enctype="multipart/form-data" action="{% url 'update_status' i.id %}" style="padding: 1rem; background-color: #61B9B5; border: 2px solid #61B9B5; border-radius: 0.375rem;">
+                                {% csrf_token %}
+                            
+                                <!-- Display error messages -->
+                                <div class="mb-3">
+                                    <label for="status-{{ i.id }}" class="form-label" style="font-weight: bold; color: white;">Status:</label>
+                                    <select class="form-select" id="status-{{ i.id }}" name="status" style="border: 1px solid #007bff; background-color: white;" id="fieldschange" data-id="{{ ticket.id }}" onchange="toggleFields({{ i.id }})">
+                                        <option value="">Select One</option>
+                                        <option value="seek-clarification" {% if i.status == 'seek-clarification' %}selected{% endif %}>Seek Clarification</option>
+                                        <option value="inprogress" {% if i.status == 'inprogress' %}selected{% endif %}>In Progress</option>
+                                        <option value="pending" {% if i.status == 'pending' %}selected{% endif %}>Pending</option>
+                                        <option value="Resolved" {% if i.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                                    </select>
+                                </div>
+                            
+                                <!-- Normal Comments Section -->
+                                <div id="existing-comments-section-{{ i.id }}" class="existing-comments">
+                                    <h5>Existing Comments:</h5>
+                                    {% if i.resolver_comments %}
+                                        <pre>{{ i.resolver_comments }}</pre>
+                                    {% else %}
+                                        <p>No comments available.</p>
+                                    {% endif %}
+                                </div>
+                            
+                                <div id="normal-comments-section-{{ i.id }}" class="mb-3">
+                                    <label for="resolver_comments-{{ i.id }}" class="form-label" style="font-weight: bold; color: white;">New Comment:</label>
+                                    <textarea class="form-control" id="resolver_comments-{{ i.id }}" name="resolver_comments" rows="3" ></textarea>
+                                </div>
+                            
+                                <!-- Seek Clarification Fields (Hidden by Default) -->
+                                <div id="seek-clarification-section-{{ i.id }}" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="seek_comments-{{ i.id }}" class="form-label" style="font-weight: bold; color: white;">Seek Clarification Comments:</label>
+                                        <textarea class="form-control" id="seek_comments-{{ i.id }}" name="seek_comments" rows="3"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="attachments" class="form-label" style="font-weight: bold; color: white;">Attachments:</label>
+                                        <input type="file" class="form-control" id="attachments" name="attachments" multiple>
+                                        <div id="attachments-preview"></div>
+                                        <div id="error-message" style="color: red; display: none;"></div>
+                                    </div> <!-- Container for displaying uploaded files -->
+                                    <div class=" mt-2 text-white">
+                                        <small>Supported file formats: JPG, JPEG, PNG, PDF, TXT, PPTX, XLSX, MP3, MP4, XLS.</small>
+                                    </div>
+                                    
+                                    
+                                </div>
+                            
+                                <!-- Link to Forward Ticket (Hidden by Default) -->
+                                <div id="forward-ticket-link-{{ i.id }}" style="display: none;">
+                                    <a href="javascript:void(0);" id="emailpopup" data-id="{{ i.id }}" style="color: white; text-decoration: underline;">Forward this ticket in email</a>
+                                </div>
+                            
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-secondary">Update Status</button>
+                                </div>
+                            </form>
+                            
+<!-- Popup Modal for Email Input -->
+<!-- Popup Modal for Email Input -->
+<div id="email-popup-{{ i.id }}" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 9999; padding-top: 10%; text-align: center;">
+    <div class="popup-content" style="background-color: white; padding: 30px; border-radius: 10px; max-width: 500px; margin: auto; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+        <h4 style="font-weight: bold; font-size: 1.5rem; margin-bottom: 20px; color: #333;">Forward Ticket via Email</h4>
+        
+        <!-- Email Form -->
+        <form id="email-form-{{ i.id }}" method="POST" action="{% url 'forward_mail_pending' i.id %}">
+            {% csrf_token %}
+            <label for="popup-email-{{ i.id }}" style="font-weight: bold; font-size: 1rem; color: #333; display: block; margin-bottom: 10px;">Recipient Email(s):</label>
+            <input type="text" id="popup-email-{{ i.id }}" name="email" class="form-control" placeholder="Enter email addresses separated by commas" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%; font-size: 0.75rem; margin-bottom: 15px;">
+            
+            <div id="popup-email-error-{{ i.id }}" style="color: red; font-size: 0.9rem; display: none; margin-bottom: 15px;">Please enter valid email addresses, separated by commas.</div>
+        
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary" style="padding: 10px 20px; font-size: 1rem; border-radius: 5px; background-color: #007bff; color: white; border: none; cursor: pointer; transition: background-color 0.3s;">
+                    Send Email
+                </button>
+                <button type="button" class="btn btn-secondary" id="emailclose" data-id="{{ i.id }}" style="padding: 10px 20px; font-size: 1rem; border-radius: 5px; background-color: #6c757d; color: white; border: none; cursor: pointer; transition: background-color 0.3s; margin-left: 10px;">
+                    Cancel
+                </button>
+            </div>
+        </form>
+        
+        
+    </div>
+</div>
+
+
+
+                            
+                            <!-- JavaScript for toggling the fields and handling the popup -->
+                            <script nonce="{{ csp_nonce }}"  >
+                                    document.addEventListener("DOMContentLoaded", function () {
+                                        // Select all dropdowns with IDs that start with "status-"
+                                        document.querySelectorAll("[id^='status-']").forEach(function (dropdown) {
+                                            dropdown.addEventListener("change", function () {
+                                                var ticketId = this.id.split("-")[1]; // Extract ticket ID from the dropdown ID
+                                                toggleFields(ticketId);
+                                            });
+                                        });
+                                    });
+                                
+                                    function toggleFields(ticketId) {
+                                        var statusSelect = document.getElementById("status-" + ticketId);
+                                        var clarificationSection = document.getElementById("seek-clarification-section-" + ticketId);
+                                        var existingCommentsSection = document.getElementById("existing-comments-section-" + ticketId);
+                                        var normalCommentsSection = document.getElementById("normal-comments-section-" + ticketId);
+                                        var forwardTicketLink = document.getElementById("forward-ticket-link-" + ticketId);
+                                
+                                        if (statusSelect.value === "seek-clarification") {
+                                            clarificationSection.style.display = "block";
+                                            existingCommentsSection.style.display = "none";
+                                            normalCommentsSection.style.display = "none";
+                                            forwardTicketLink.style.display = "none";
+                                        } else if (statusSelect.value === "pending") {
+                                            forwardTicketLink.style.display = "block";  
+                                            clarificationSection.style.display = "none";
+                                            existingCommentsSection.style.display = "block";
+                                            normalCommentsSection.style.display = "block";
+                                        } else {
+                                            clarificationSection.style.display = "none";
+                                            existingCommentsSection.style.display = "block";
+                                            normalCommentsSection.style.display = "block";
+                                            forwardTicketLink.style.display = "none";
+                                        }
+                                    }
+                            
+                                // Open the email popup
+                                function openEmailPopup(ticketId) {
+                                    var popup = document.getElementById("email-popup-" + ticketId);
+                                    popup.style.display = "block";  // Show the popup
+                                }
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    const buttons = document.querySelectorAll('#emailpopup');
+                               
+                                    buttons.forEach(button => {
+                                        button.addEventListener('click', (event) => {
+                                            event.preventDefault(); // Prevent the default anchor behavior
+                                            const userId = button.getAttribute('data-id');
+                                            openEmailPopup(userId);            
+                                            });
+                                    });
+                                }); 
+                            
+                               // Close the email popup and reset the input field
+                               function closeEmailPopup(ticketId) {
+                                var popup = document.getElementById("email-popup-" + ticketId);
+                                var emailInput = document.getElementById("popup-email-" + ticketId);  // Get the email input field
+                                var emailError = document.getElementById("popup-email-error-" + ticketId);  // Get the error message
+                            
+                                // Reset the email input field value
+                                emailInput.value = '';
+                            
+                                // Hide the error message
+                                emailError.style.display = 'none';
+                            
+                                // Hide the popup
+                                popup.style.display = "none";
+                            }
+                            document.addEventListener('DOMContentLoaded', () => {
+                                const buttons = document.querySelectorAll('#emailclose');
+                           
+                                buttons.forEach(button => {
+                                    button.addEventListener('click', (event) => {
+                                        event.preventDefault(); // Prevent the default anchor behavior
+                                        const userId = button.getAttribute('data-id');
+                                        closeEmailPopup(userId);            
+                                        });
+                                });
+                            }); 
+
+                            
+                                // Send the email (this is just for the demo, actual sending logic will depend on your backend)
+                                function sendEmail(ticketId) {
+                                    var emailInput = document.getElementById("popup-email-" + ticketId);
+                                    var emailError = document.getElementById("popup-email-error-" + ticketId);
+                            
+                                    // Validate the email format
+                                    var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                                    if (!emailPattern.test(emailInput.value)) {
+                                        emailError.style.display = "block";
+                                    } else {
+                                        emailError.style.display = "none";
+                                        // Send the email (you need to integrate the email sending logic with your backend here)
+                                        alert("Email sent to " + emailInput.value);
+                                        closeEmailPopup(ticketId);
+                                    }
+                                }
+                            
+                                // Call toggleFields for each ticket on page load to check the initial status
+                                window.onload = function() {
+                                    document.querySelectorAll("select[id^='status-']").forEach(function(selectElement) {
+                                        var ticketId = selectElement.id.split('-')[1];
+                                        toggleFields(ticketId);
+                                    });
+                                };
+
+                                document.getElementById("email-form-{{ i.id }}").addEventListener("submit", function(event) {
+                                    const emailInput = document.getElementById("popup-email-{{ i.id }}");
+                                    const emailError = document.getElementById("popup-email-error-{{ i.id }}");
+                                
+                                    // Split the emails by comma and trim spaces
+                                    const emails = emailInput.value.split(',').map(email => email.trim());
+                                
+                                    // Regular expression for validating email format
+                                    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                                    
+                                    // Check each email
+                                    const invalidEmails = emails.filter(email => !emailRegex.test(email));
+                                    
+                                    // Show error if there are invalid emails
+                                    if (invalidEmails.length > 0) {
+                                        emailError.style.display = "block";
+                                        event.preventDefault();  // Prevent form submission
+                                    } else {
+                                        emailError.style.display = "none";
+                                    }
+                                });
+                            </script>
+                            
+                            
+                            
+ 
+                            <script nonce="{{ csp_nonce }}"  >
+                                const attachmentsInput = document.getElementById('attachments');
+                                const previewContainer = document.getElementById('attachments-preview');
+                                const errorMessage = document.getElementById('error-message');
+                            
+                                // Allowed file extensions
+                                const allowedExtensions = ["jpg", "jpeg", "png", "pdf", "pptx", "xlsx", "mp3", "mp4", "xls", "txt"];
+                                const maxFileSize = 50 * 1024 * 1024; // 50 MB in bytes
+                                attachmentsInput.addEventListener('change', function (event) {
+                                    updatePreview(event.target.files);
+                                });
+                            
+                                function updatePreview(fileList) {
+                                    previewContainer.innerHTML = ''; // Clear previous previews
+                                    errorMessage.style.display = 'none'; // Hide error message
+                            
+                                    const validFiles = [];
+                                    Array.from(fileList).forEach((file, index) => {
+                                        // Validate file name format (only one dot separating name and extension)
+                                        const regex = /^[^\.]+\.[^\.]+$/;
+                                        if (!regex.test(file.name)) {
+                                            errorMessage.textContent = `Invalid file name format: ${file.name}`;
+                                            errorMessage.style.display = 'block';
+                                            return;
+                                        }
+                            
+                                        // Extract file extension and validate it
+                                        const fileExtension = file.name.split('.').pop().toLowerCase();
+                                        if (!allowedExtensions.includes(fileExtension)) {
+                                            errorMessage.textContent = `Unsupported file type: ${file.name}`;
+                                            errorMessage.style.display = 'block';
+                                            return;
+                                        }
+                            
+                                        // Validate file size
+                                        if (file.size > maxFileSize) {
+                                            errorMessage.textContent = `File size exceeds 50 MB: ${file.name}`;
+                                            errorMessage.style.display = 'block';
+                                            return;
+                                        }
+                            
+                                        validFiles.push(file);
+                            
+                                        // Create file preview
+                                        const link = document.createElement('a'); // Create a new anchor element
+                                        link.href = URL.createObjectURL(file); // Create a URL for the file
+                                        link.textContent = file.name; // Set the text to the file name
+                                        link.target = '_blank'; // Open link in a new tab
+                            
+                                        const deleteButton = document.createElement('button'); // Create a delete button
+                                        deleteButton.innerHTML = '<i class="fas fa-trash" style="color: red;"></i>'; // Trash icon
+                                        deleteButton.style.marginLeft = '10px'; // Add some spacing
+                                        deleteButton.style.background = 'none'; // No background
+                                        deleteButton.style.border = 'none'; // No border
+                                        deleteButton.style.cursor = 'pointer'; // Pointer cursor
+                            
+                                        deleteButton.onclick = function () {
+                                            const dataTransfer = new DataTransfer();
+                                            validFiles.forEach((f, i) => {
+                                                if (i !== index) { // Exclude the deleted file
+                                                    dataTransfer.items.add(f);
+                                                }
+                                            });
+                            
+                                            attachmentsInput.files = dataTransfer.files; // Update the file input
+                                            updatePreview(dataTransfer.files); // Update the preview
+                                        };
+                            
+                                        const fileContainer = document.createElement('div'); // Create a container for the link and button
+                                        fileContainer.appendChild(link); // Append the link
+                                        fileContainer.appendChild(deleteButton); // Append the delete button
+                                        previewContainer.appendChild(fileContainer); // Append the container to the preview section
+                                    });
+                            
+                                    // Update the file input with only valid files
+                                    const dataTransfer = new DataTransfer();
+                                    validFiles.forEach(file => dataTransfer.items.add(file));
+                                    attachmentsInput.files = dataTransfer.files;
+                            
+                                    // Check if there are no files left
+                                    if (validFiles.length === 0) {
+                                        attachmentsInput.value = ''; // Clear the file input
+                                    }
+                                }
+                            </script>
+                            
+                            
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            {% for ticket in assigned_tickets%}
+
+            <div class="modal fade" id="ticketHistoryModal{{ ticket.id }}" tabindex="-1" aria-labelledby="ticketHistoryModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" >
+                    <div class="modal-content">
+                        <!-- Ticket History Details Here -->
+                        <div class="modal-header">
+                            <div>
+                                <h5 class="modal-title" style="color: #fff;" id="ticketHistoryModalLabel">Ticket History: {{ ticket.id|dynamic_zfill:ticket.store_code }}</h5>
+                                <span class="created-by" style="font-size: 12px;color: #c9fffd;">Ticket Created by <b>{{ticket.created_by}}</b></span>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Display Ticket History Details Here -->
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered" style="border-collapse: revert;">
+                                    <tbody>
+                                        <tr>
+                                            <td><b>Ticket Number:</b><br> {{ ticket.id|dynamic_zfill:ticket.store_code }}</td>
+                                            <td><b>Ticket Created Date:</b><br> {{ ticket.created }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Current Status:</b><br>
+                                                {% if ticket.status == 'open' %}
+                                                <span class="badge badge-danger" style="font-size: 10px;">Open</span>
+                                                {% elif ticket.status == 'inprogress' %}
+                                                <span class="badge badge-info" style="font-size: 10px;">In Progress</span>
+                                                {% elif ticket.status == 'pending' %}
+                                                <span class="badge badge-warning" style="font-size: 10px;">Pending</span>
+                                                {% elif ticket.status == 'closed' %}
+                                                <span class="badge badge-success" style="font-size: 10px;">Closed</span>
+                                                {% elif ticket.status == 'assigned' %}
+                                                <span class="badge badge-secondary" style="font-size: 10px;">Assigned</span>
+                                                {% elif ticket.status == 'reopen' %}
+                                                <span class="badge badge-secondary" style="font-size: 10px;background-color: #c60e82; color: white;">Reopen</span>
+                                                {% elif ticket.status == 'seek-clarification' %}
+                                                <span class="badge badge-dark" style="font-size: 10px;">{{ ticket.status }}</span>
+                                                {% else %}
+                                                <span class="badge badge-primary" style="font-size: 10px;">{{ ticket.status }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td><b>Raised by:</b><br> {{ticket.store_code}}</td>
+                                        </tr>
+                                        {% if ticket.status != 'open' and  ticket.status != 'reopen' %}
+                                        <tr>
+                                            <td><b>Assigned Engineer:</b><br> {{ ticket.assignee }}</td>
+
+                                            <td><b>Ticket Assigned Date:</b><br> {{ ticket.assigned_date }}</td>
+                                                                                 
+                                        </tr>
+                                        {% endif %} 
+
+                                        {% if ticket.status == 'reopen' %}
+
+                                        <tr>
+                                            <td><b>Resolved Date:</b><br> {{ ticket.resolved_date }}</td>
+
+                                            <td><b>Resolver Comments:</b><br> {{ ticket.resolver_comments }}</td>
+                                        </tr>
+                                        {% endif %}
+
+                                        
+                                        
+                                        {% if ticket.status != 'open' and ticket.status != 'assigned'  %}
+                                        <tr>
+                                               
+                                            <td><b>
+                                                {% if ticket.status == 'Resolved' %}
+                                                    Resolved Date:
+                                                {% elif ticket.status == 'closed' %}
+                                                    Ticket Closed Date:
+                                                {% elif ticket.status == 'pending' %}
+                                                    Ticket Pending Date:
+                                                {% elif ticket.status == 'inprogress' %}
+                                                    Ticket Inprogress Date:
+                                                {% elif ticket.status == 'reopen' %}
+                                                    Ticket Reopen Date:
+                                                {% elif ticket.status == 'seek-clarification' %}
+                                                    Ticket status Changed Date:
+                                                {% else %}
+                                                    Ticket Closed Date:
+                                                {% endif %}
+                                                </b><br>
+                                                {% if ticket.status == 'Resolved' %}
+                                                    {{ ticket.resolved_date }}
+                                                {% elif ticket.status == 'closed' %}
+                                                    {{ ticket.closed_date }}
+                                                {% elif ticket.status == 'pending' %}
+                                                    {{ ticket.status_changed_date }}
+                                                {% elif ticket.status == 'inprogress' %}
+                                                    {{ ticket.status_changed_date }}
+                                                {% elif ticket.status == 'reopen' %}
+                                                    {{ ticket.reopen_date }}
+                                                {% elif ticket.status == 'seek-clarification' %}
+                                                    {{ ticket.status_changed_date }}
+                                             
+                                                {% else %}
+                                                    N/A
+                                                {% endif %}
+                                            </td>                                                    
+                                            <td><b>
+                                                {% if ticket.status == 'Resolved' %}
+                                                    Resolved Comments:
+                                              
+                                                {% elif ticket.status == 'reopen' %}
+                                                    Reopen Comments:
+                                                {% elif ticket.status == 'pending' %}
+                                                    Pending Comments:
+                                                {% elif ticket.status == 'inprogress' %}
+                                                    Inprogress Comments:
+                                                {% elif ticket.status == 'closed' %}
+                                                    Closure Comments:
+                                                {% elif ticket.status == 'seek-clarification' %}
+                                                    Resolved Comments:
+                                                {% else %}
+                                                     Comments:
+                                                {% endif %}
+                                                </b><br>
+                                                {% if ticket.status == 'Resolved' %}
+                                                    {% if ticket.resolver_comments %}
+                                                        {% for comment in ticket.resolver_comments.splitlines %}
+                                                            <div>{{ comment }}</div>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        No comments available.
+                                                    {% endif %}   
+                                                {% elif ticket.status == 'inprogress' %}
+                                                    {% if ticket.resolver_comments %}
+                                                        {% for comment in ticket.resolver_comments.splitlines %}
+                                                            <div>{{ comment }}</div>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        No comments available.
+                                                    {% endif %}                                               
+                                                {% elif ticket.status == 'reopen' %}
+                                                    {{ ticket.reopen_comments }}
+                                                {% elif ticket.status == 'pending' %}
+                                                    {% if ticket.resolver_comments %}
+                                                        {% for comment in ticket.resolver_comments.splitlines %}
+                                                            <div>{{ comment }}</div>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        No comments available.
+                                                    {% endif %}
+                                                {% elif ticket.status == 'seek-clarification' %}
+                                                    {% if ticket.resolver_comments %}
+                                                        {% for comment in ticket.resolver_comments.splitlines %}
+                                                            <div>{{ comment }}</div>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        No comments available.
+                                                    {% endif %}   
+                                                {% else %}
+                                                    {{ticket.closure_comments}}
+                                                {% endif %}
+                                            </td>                                             
+                                        </tr>
+                                        {% endif %}
+
+
+                                        
+                                        <tr>
+                                            <td><b>Category:</b><br> {{ ticket.category }}</td>
+                                            <td><b>Subcategory:</b><br> {{ ticket.subcategory|capfirst }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Short Description:</b><br> {{ ticket.short_description }}</td>
+
+                                            <td><b>Approval:</b><br> {{ ticket.approval|default:"None"|title }}</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td colspan="2" style="white-space: normal;"><b>Detailed Description:</b> {{ ticket.detailed_description }}</td>
+                                        </tr>
+                                       
+                                        
+                                        <tr>
+                                            <td colspan="2">
+                                                <b>Attachments:</b>
+                                                {% if ticket.uploads.exists %}
+                                                
+                                                <ul class="scrollable-section">
+                                                    {% for file_upload in ticket.uploads.all %}
+                                                    <li class="text-nowrap-on-desktop">
+                                                        <a href="{{ file_upload.file.url }}" download="{{ file_upload.file.name }}">
+                                                            <span class="badge badge-success" style="padding: 0rem 0.62rem;"><i class="fa fa-download"></i>&nbsp;Download</span>
+                                                        </a>
+                                                        <a href="{{ file_upload.file.url }}" data-url="{{ file_upload.file.url }}" class="attachment-link">
+                                                            <span>{{ file_upload.file.name }}</span>
+                                                        </a>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                                {% else %}
+                                                <p>No files uploaded.</p>
+                                                {% endif %}
+                                            </td>            
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <a class="btn btn-link" href="javascript:void(0);"id="seekhistory" data-id="{{ ticket.id }}">
+                                                    Seek Clarification History
+                                                </a>
+                                                <div class="clarification-history" id="clarificationHistory{{ ticket.id }}" style="display: none;">
+                                                    <div class="card card-body">
+                                                        <h5 class="fw-bold">Clarification History</h5>
+                                                        <div style="font-size: smaller; color: gray;">{{ ticket.created_at|date:"Y-m-d H:i" }}</div>
+                                                        
+                                                        {% if clarification_histories|get_item:ticket.id|length > 0 %}
+                                                            {% for clarification in clarification_histories|get_item:ticket.id %}
+                                                                <div class="border rounded p-3 mb-3" style="border: 1px solid #ddd;">
+                                                                    <strong>{{ ticket.assignee }}</strong>
+                                                                    <div style="font-size: smaller; color: gray;">{{ clarification.created_at|date:"Y-m-d H:i" }}</div>
+                                                                    <p class="mt-2">{{ clarification.seek_comment }}</p>
+                                                                    
+                                                                    <h6 class="mt-3">Attachments:</h6>
+                                                                    {% with seek_attachments|get_item:ticket.id as attachments %}
+                                                                        {% if attachments %}
+                                                                            <ul class="list-unstyled">
+                                                                                {% for file_upload in attachments %}
+                                                                                    {% if file_upload.clarification_history == clarification %}
+                                                                                        {% if file_upload.clarification_image %}
+                                                                                            <li>
+                                                                                                <a href="{{ file_upload.clarification_image.url }}" download="{{ file_upload.clarification_image.name }}">
+                                                                                                    <span class="badge bg-success" style="padding: 0rem 0.62rem;">
+                                                                                                        <i class="fa fa-download"></i>&nbsp;Download
+                                                                                                    </span>
+                                                                                                </a>
+                                                                                                <a href="{{ file_upload.clarification_image.url }}" data-url="{{ file_upload.clarification_image.url }}" class="attachment-link">
+                                                                                                    <span class="ms-2">{{ file_upload.clarification_image.name }}</span>
+                                                                                                </a>
+                                                                                            </li>
+                                                                                        {% endif %}
+                                                                                    {% endif %}
+                                                                                {% endfor %}
+                                                                            </ul>
+                                                                        {% else %}
+                                                                            <p>No attachments available.</p>
+                                                                        {% endif %}
+                                                                    {% endwith %}
+                                                                    
+                                                                    <h6 class="mt-3">Clarified Comment:</h6>
+                                                                    <p>{{ clarification.clarified_comment|default:"No clarified comment available." }}</p>
+                                                                    
+                                                                    <h6 class="mt-3">Clarified Attachments:</h6>
+                                                                    {% with seek_attachments|get_item:ticket.id as attachments %}
+                                                                        {% if attachments %}
+                                                                            <ul class="list-unstyled">
+                                                                                {% for file_upload in attachments %}
+                                                                                    {% if file_upload.clarification_history == clarification %}
+                                                                                        {% if file_upload.clarified_image %}
+                                                                                            <li>
+                                                                                                <a href="{{ file_upload.clarified_image.url }}" download="{{ file_upload.clarified_image.name }}">
+                                                                                                    <span class="badge bg-success" style="padding: 0rem 0.62rem;">
+                                                                                                        <i class="fa fa-download"></i>&nbsp;Download
+                                                                                                    </span>
+                                                                                                </a>
+                                                                                                <a href="{{ file_upload.clarified_image.url }}" data-url="{{ file_upload.clarified_image.url }}" class="attachment-link">
+                                                                                                    <span class="ms-2">{{ file_upload.clarified_image.name }}</span>
+                                                                                                </a>
+                                                                                            </li>
+                                                                                        {% endif %}
+                                                                                    {% endif %}
+                                                                                {% endfor %}
+                                                                            </ul>
+                                                                        {% else %}
+                                                                            <p>No attachments available.</p>
+                                                                        {% endif %}
+                                                                    {% endwith %}
+                                                                </div>
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            <p>No clarification history available.</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr> 
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                      
+                        
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No tickets assigned.</p>
+        {% endif %}
+    </div>
+</div>
+
+
+{% if messages %}
+<script nonce="{{ csp_nonce }}"   src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script nonce="{{ csp_nonce }}"  >
+    document.addEventListener('DOMContentLoaded', function() {
+        // Retrieve and display messages
+        {% for message in messages %}
+            const messageContent = JSON.parse('{{ message|escapejs }}');  // Escape the message for JS
+            if (messageContent.type === 'success') {
+                Swal.fire({
+                    title: 'Ticket Status Updated Successfully', // Static title
+                    text: messageContent.text,  // Use the dynamic text
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                });
+            } else if (messageContent.type === 'error') {
+                Swal.fire({
+                    title: 'Error',
+                    text: messageContent.text,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                });
+            }
+        {% endfor %}
+    });
+</script>
+
+{% endif %}
+
+ 
+    
+    <script nonce="{{ csp_nonce }}"  >
+        function openTicketModal(ticketNumber) {
+            var modal = document.getElementById("ticketModal_" + ticketNumber);
+            var modalInstance = new bootstrap.Modal(modal, {
+                keyboard: false
+            });
+            modalInstance.show();
+        }
+
+        
+    </script>
+ <script nonce="{{ csp_nonce }}"  >
+    function toggleClarificationHistory(ticketId) {
+        const clarificationHistoryDiv = document.getElementById(`clarificationHistory${ticketId}`);
+        if (clarificationHistoryDiv.style.display === "none") {
+            clarificationHistoryDiv.style.display = "block";
+        } else {
+            clarificationHistoryDiv.style.display = "none";
+        }
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const buttons = document.querySelectorAll('#seekhistory');
+   
+        buttons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent the default anchor behavior
+                const userId = button.getAttribute('data-id');
+                toggleClarificationHistory(userId);            
+                });
+        });
+    }); 
+</script>  
+
+    
+
+{% endblock %}

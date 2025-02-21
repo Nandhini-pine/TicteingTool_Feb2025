@@ -1,0 +1,348 @@
+{% extends 'CFAPerson/CFAPerson_header.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+	.custom-file-upload {
+		display: inline-block;
+		padding: 6px 12px;
+		cursor: pointer;
+		border: 1px solid #ccc;
+		background-color: #f8f8f8;
+		border-radius: 4px;
+		position: relative;
+		/* Add this to allow positioning of the input */
+	}
+
+	/* Style the input to be transparent and cover the button */
+	#fileUpload {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		cursor: pointer;
+		opacity: 0;
+	}
+
+	.remove-button {
+		background-color: transparent;
+		border: none;
+		cursor: pointer;
+		font-size: 1rem;
+		margin-left: 5px;
+		color: red;
+	}
+</style>
+
+
+
+<div class="content-body">
+	<div class="container-fluid">
+		{% if errors %}
+		<div class="alert alert-danger">
+			<ul>
+				{% for error in errors %}
+				<li>{{ error }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+		{% endif %}
+
+
+		<!-- row -->
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="card">
+					<div class="card-body">
+						<!-- -------form-validation----- -->
+
+						<div id="ticket-form">
+							<!-- -------form-validation----- -->
+							<form method="post" enctype="multipart/form-data">
+								{% csrf_token %}
+								<div class="form-validation">
+									<div class="needs-validation" novalidate>
+										<div class="row justify-content-center"> <!-- Center the content -->
+											<div class="col-xl-10">
+												<div class="col-xl-10">
+													{% if messages %}
+													{% for message in messages %}
+													<div class="alert alert-danger" role="alert">
+														<ul>
+															<li>{{ message }}</li>
+														</ul>
+													</div>
+													{% endfor %}
+													{% endif %}
+													<!-- Rest of your HTML content -->
+												</div>
+
+												<div class="mb-3 row">
+													<label class="col-lg-3 col-form-label" for="category">Category <span
+															class="text-danger">*</span></label>
+													<div class="col-lg-9">
+														<select class="form-control" id="category" name="category">
+															<option data-display="Select">Please Select</option>
+															{% for category in categories %}
+															<option value="{{ category.id }}">{{ category.name }}
+															</option>
+															{% endfor %}
+														</select>
+														<div class="invalid-feedback">
+															Please select a category.
+														</div>
+													</div>
+												</div>
+
+												<div class="mb-3 row">
+													<label class="col-lg-3 col-form-label" for="subcategory">Subcategory
+														<span class="text-danger">*</span></label>
+													<div class="col-lg-9">
+														<select class="form-control" id="subcategory"
+															name="subcategory">
+															<option data-display="Select">Please Select</option>
+															{% for subcategory in subcategories %}
+															<option value="{{ subcategory.id }}">{{ subcategory.name }}
+															</option>
+															{% endfor %}
+														</select>
+														<div class="invalid-feedback">
+															Please select a subcategory.
+														</div>
+													</div>
+												</div>
+
+												<div class="mb-3 row">
+													<label class="col-lg-3 col-form-label" for="short_description">Short
+														Description <span class="text-danger">*</span></label>
+													<div class="col-lg-9">
+														<input type="text" class="form-control" id="short_description"
+															name="short_description"
+															placeholder="Enter short description...">
+														<div class="invalid-feedback">
+															Please enter a short description.
+														</div>
+														<div class="text-muted mt-2">
+															<small>Allowed: Space, hyphen (-), underscore (_), comma (,), dot (.), (), :, ;, quotes (' " '), %.</small>
+														</div>
+														
+													</div>
+												</div>
+
+												<div class="mb-3 row">
+													<label class="col-lg-3 col-form-label"
+														for="detailed_description">Detailed Description <span
+															class="text-danger">*</span></label>
+													<div class="col-lg-9">
+														<textarea class="form-control" id="detailed_description"
+															name="detailed_description" style="height: 200px;"
+															placeholder="Enter detailed description..."></textarea>
+														<div class="invalid-feedback">
+															Please enter a detailed description.
+														</div>
+														<div class="text-muted mt-2">
+															<small>Allowed: Space, hyphen (-), underscore (_), comma (,), dot (.), (), :, ;, quotes (' " '), %.</small>
+														</div>
+														
+													</div>
+												</div>
+
+												<!-- Add a file input field for multiple file uploads -->
+												<div class="mb-3 row">
+													<label class="col-lg-3 col-md-12 col-form-label"
+														for="fileUpload">Upload Images/Files</label>
+													<div class="col-lg-9 col-md-12">
+														<div class="input-group">
+															<label for="fileUpload" id="fileUploadLabel"
+																class="custom-file-upload input-group-prepend">
+																<span class="input-group-text">Choose Files</span>
+																<input type="file" class="form-control" id="fileUpload"
+																	name="fileUpload[]" multiple
+																	onchange="validateFileSelection(event)">
+															</label>
+														</div>
+														<div class="invalid-feedback">
+															Please select one or more files with supported extensions
+															(jpg, jpeg, png, pdf, pptx, xlsx, mp3, mp4, xls).
+														</div>
+														<div id="unsupportedFileError" class="text-danger"
+															style="display: none;">
+															Unsupported file type. Please select a valid file.
+														</div>
+														<div class="text-muted mt-2">
+															<small>Supported file formats: JPG, JPEG, PNG, PDF, TXT, PPTX, XLSX, MP3, MP4, XLS.</small>
+														</div>
+														
+													</div>
+												</div>
+
+												<!-- Hidden input field to store file names -->
+												<input type="hidden" id="uploadedFiles" name="uploadedFiles" value="">
+
+												<!-- Display selected file names as clickable links with a remove option -->
+												<div class="mb-3 row">
+													<label class="col-lg-3 col-form-label" for="selected_files">Selected
+														Files:</label>
+													<div class="col-lg-9">
+														<ul id="selectedFilesList"></ul>
+													</div>
+												</div>
+
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<div class="col-lg-5 ms-auto">
+										<button type="submit" class="btn btn-primary">Save Ticket</button>&nbsp;
+										<button type="reset" class="btn" id="resetButton" style="background-color: #FF798A; color: white;">Reset</button>
+									</div>
+								</div>
+							</form>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+	<script nonce="{{ csp_nonce }}"  >
+		document.getElementById('resetButton').addEventListener('click', function () {
+			location.reload(); // This will refresh the page
+		});
+	</script>
+
+	<script nonce="{{ csp_nonce }}"  >
+		function updateUploadedFiles() {
+			const selectedFilesList = document.getElementById('selectedFilesList');
+			const fileLinks = selectedFilesList.querySelectorAll('a');
+			const fileNames = Array.from(fileLinks).map(link => link.textContent);
+			document.getElementById('uploadedFiles').value = fileNames.join(',');
+
+			// Update the selected files count
+			const fileCountSpan = document.getElementById('fileCount');
+			if (fileLinks.length === 0) {
+				fileCountSpan.textContent = '0 files';
+			} else {
+				fileCountSpan.textContent = fileLinks.length + ' files';
+			}
+		}
+
+		// Function to remove a file from the selected files list and update the hidden input field
+		function removeFile(listItem) {
+			listItem.remove();
+			updateUploadedFiles();
+		}
+
+		document.getElementById('fileUpload').addEventListener('change', function () {
+			const fileList = this.files;
+			const selectedFilesList = document.getElementById('selectedFilesList');
+			const unsupportedFileError = document.getElementById('unsupportedFileError');
+
+			unsupportedFileError.style.display = 'none'; // Hide the error message initially
+
+			selectedFilesList.innerHTML = ''; // Clear the list
+
+			for (let i = 0; i < fileList.length; i++) {
+				const fileName = fileList[i].name;
+				const fileSize = (fileList[i].size / 1024).toFixed(2) + ' KB';
+				const fileType = getFileTypeIcon(fileName);
+
+				// Check if the file type is unsupported
+				if (!isFileTypeSupported(fileName)) {
+					unsupportedFileError.style.display = 'block'; // Show the error message
+					this.value = ''; // Clear the file input to prevent unsupported files from being uploaded
+					return; // Exit the loop
+				}
+
+				// Create a list item for the file
+				const listItem = document.createElement('li');
+				listItem.className = 'file-list-item'; // Add a class for styling
+
+				// Create an icon element for the file type
+				const fileIcon = document.createElement('i');
+				fileIcon.className = 'file-icon ' + fileType;
+				fileIcon.style.marginRight = '10px'; // Add spacing to the right of the icon
+
+				// Create a link for the file
+				const fileLink = document.createElement('a');
+				fileLink.textContent = fileName;
+				fileLink.href = URL.createObjectURL(fileList[i]);
+				fileLink.target = '_blank'; // Open the link in a new tab
+
+				// Create a span for the file size
+				const fileSizeSpan = document.createElement('span');
+				fileSizeSpan.textContent = '(' + fileSize + ')';
+				fileSizeSpan.style.marginLeft = '10px'; // Add spacing to the left of the size
+
+				// Create a remove button (cross icon)
+				const removeButton = document.createElement('button');
+				removeButton.textContent = '×'; // Cross icon
+				removeButton.className = 'remove-button';
+				removeButton.addEventListener('click', function () {
+					// Remove the list item when the remove button is clicked
+					removeFile(listItem);
+				});
+
+				// Append the icon, link, size span, and remove button to the list item
+				listItem.appendChild(fileIcon);
+				listItem.appendChild(fileLink);
+				listItem.appendChild(fileSizeSpan);
+				listItem.appendChild(removeButton);
+
+				// Append the list item to the selectedFilesList
+				selectedFilesList.appendChild(listItem);
+			}
+
+			// Update the hidden input field with the updated file names
+			updateUploadedFiles();
+		});
+
+		// Function to check if the file type is supported
+		function isFileTypeSupported(fileName) {
+			// Define the allowed extensions
+			const allowedExtensions = ["jpg", "jpeg", "png", "pdf", "pptx", "xlsx", "mp3", "mp4", "xls", "txt"];
+			
+			// Extract the actual file name (excluding path, if any) and its extension
+			const fileParts = fileName.split('.');
+			if (fileParts.length !== 2) {
+				return false; // Disallow files with more than one period in their name
+			}
+			
+			const fileExtension = fileParts.pop().toLowerCase(); // Get the extension
+			return allowedExtensions.includes(fileExtension);
+		}
+
+		// Function to get file type icon class based on file extension
+		function getFileTypeIcon(fileName) {
+			const fileExtension = fileName.split('.').pop().toLowerCase();
+			switch (fileExtension) {
+				case 'pdf':
+					return 'fas fa-file-pdf text-danger'; // PDF icon in red color
+				case 'jpg':
+				case 'jpeg':
+				case 'png':
+				case 'gif':
+					return 'fas fa-file-image text-primary'; // Image icon in blue color
+				case 'pptx':
+					return 'fas fa-file-powerpoint text-warning'; // PPTX icon in yellow color
+				case 'xls':
+				case 'xlsx':
+					return 'fas fa-file-excel text-success'; // Excel icon in green color
+				case 'mp3':
+					return 'fas fa-file-audio text-info'; // MP3 icon in info color
+				case 'mp4':
+					return 'fas fa-file-video text-secondary'; // MP4 icon in secondary color
+
+				default:
+					return 'fas fa-file'; // Default file icon
+			}
+		}
+	</script>
+	
+
+	{% endblock %}

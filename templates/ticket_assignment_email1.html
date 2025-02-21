@@ -1,0 +1,85 @@
+{% load static %}
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Ticket Assignment</title>
+    <style>
+        /* Add custom CSS styles for coloring and layout */
+        body {
+            background-color: #f5f5f5; /* Set a background color */
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            background-color: #fff; /* Set a container background color */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px #888888;
+        }
+
+        #header {
+            background-color: #61b9b5; /* Set header background color */
+            color: #fff; /* Set text color in header */
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px 10px 0px 0px;
+        }
+
+        #footer {
+            background-color: #c1bdbd; /* Set footer background color */
+            color: #fff; /* Set text color in footer */
+            text-align: center;
+            padding: 10px;
+            border-radius: 0px 0px 10px 10px;
+        }
+
+        /* Style the Titan logo */
+        #logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 100px; /* Adjust the width as needed */
+        }
+
+        /* Add a new CSS class for light-colored and centered text */
+        .light-center {
+            color: #888; /* Set the text color to a light shade */
+            text-align: center; /* Center-align the text */
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="header">
+            <h1>New Ticket Assigned to {{instance.assignee.username|capfirst}}</h1>
+        </div>
+        <p class="light-center"><strong>Ticket ID:</strong>{{ instance.store_code|dynamic_zfill:instance.id }}</p>
+        <p class="light-center"><strong>Created By:</strong> {{ instance.created_by.username|capfirst }}</p>
+        <p class="light-center"><strong>Assigned To:</strong> {{ instance.assignee.username|capfirst }}</p>
+        <p class="light-center"><strong>CFA Code:</strong> {{ instance.store_code }}</p>
+        <p class="light-center"><strong>Status:</strong> 
+            {% if instance.status == 'assigned' %}
+            <b style="color: rgb(5, 78, 130);">{{ instance.status|capfirst }}</b>
+        {% elif instance.status == 'inprogress' %}
+            <b style="color: blue;">{{ instance.status|capfirst }}</b>
+        {% elif instance.status == 'pending' %}
+            <b style="color: orange;">{{ instance.status|capfirst}}</b>
+        {% elif instance.status == 'closed' %}
+            <b style="color: red;">{{ instance.status|capfirst }}</b>
+        {% else %}
+            <b>{{ instance.status }}</b>
+        {% endif %}
+        </p>
+        <p class="light-center"><strong>Category:</strong> {{ instance.category.name }}</p>
+        <p class="light-center"><strong>Subcategory:</strong> {{ instance.subcategory.name }}</p>
+        <p class="light-center"><strong>Description:</strong> {{ instance.short_description|capfirst }}</p>
+        <p class="light-center"><strong>Assigned Date:</strong> {{ instance.assigned_date }}</p>
+        <p>Visit Website: <a href="https://wwdsupport.titan.in/">https://wwdsupport.titan.in/</a></p>
+
+        <div id="footer">
+            <p>Copyright � Designed &amp; Developed by <a href="#" target="_blank">Pinesphere</a> 2023</p>
+        </div>
+    </div>
+</body>
+</html>

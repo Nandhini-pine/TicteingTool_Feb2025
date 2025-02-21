@@ -1,0 +1,1556 @@
+{% extends 'Admin/admin_header.html' %}
+{% load static %}
+{% block content %}
+
+
+<style>
+    /* Media query for small screens */
+
+    /* Add this CSS to your stylesheet */
+    .btn-pagination {
+        display: inline-block;
+        padding: 8px 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #61b9b5;
+        color: #fff;
+        border: 1px solid #61b9b5;
+        border-radius: 4px;
+        margin: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-pagination:hover {
+        background-color: #3cc1ba;
+    }
+
+    .current-page {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #f5f5f5;
+        color: #333;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin: 4px;
+    }
+
+    /* Custom CSS for adjusting modal width */
+    #ApprovalModel .modal-dialog {
+        max-width: 55%;
+        /* Adjust this value as needed */
+        max-height: 10%;
+    }
+
+    #SubcategoryModel .modal-dialog {
+        max-width: 55%;
+        /* Adjust this value as needed */
+    }
+
+    .brand-logo img {
+        /* Set the maximum width for your logo */
+        max-width: 100%;
+    }
+
+    .brand-name {
+        color: white;
+        font-size: 30px;
+        margin-top: 9px;
+        margin-left: -11px;
+    }
+
+    /* styles.css */
+    .logo-container {
+        background-color: white;
+        border-radius: 117%;
+        padding: 0px;
+        display: inline-block;
+        max-width: 25%;
+        padding-top: 0px;
+    }
+
+
+
+    .logo-container img {
+
+        max-width: 90%;
+
+        display: block;
+        /* Remove any residual spacing from the image */
+
+        margin: -5px auto;
+        /* Center the image within the container */
+    }
+
+    .brand-name {
+        color: white;
+    }
+
+    /* Define a media query for when the sidebar is maximized */
+    @media (max-width: 1024px) {
+
+        /* Show the logo and title */
+
+        .logo-container {
+            display: block;
+            max-width: 80%;
+        }
+
+        p.brand-name {
+            display: none;
+        }
+
+        /* Optionally add styles for the logo and title when shown in the maximized sidebar */
+
+        .logo-abbr {
+            max-width: 80px;
+            /* Adjust the max-width as needed */
+        }
+    }
+
+    @media (min-width: 1024px) {
+
+        /* Show the logo and title */
+        .logo-container,
+        p.brand-name {
+            display: block;
+            max-width: 115%;
+            height: 92%;
+        }
+
+        /* Optionally add styles for the logo and title when shown in the maximized sidebar */
+        .logo {
+            max-width: 100px;
+            /* Adjust the max-width as needed */
+        }
+    }
+
+    /* Initially hide the logo and title */
+    .brand-name {
+        display: block;
+    }
+
+    /* Define a class to hide the logo and title when the sidebar is minimized */
+    .nav-header.minimized .brand-name {
+        display: none;
+    }
+
+    /* Add styles for the minimized nav-header (e.g., adjust padding) */
+    .nav-header.minimized {
+        padding: 1px;
+        /* Adjust padding as needed */
+    }
+
+    .nav-header.minimized .logo-container {
+        max-width: 58%;
+        margin-right: -10px;
+        margin-bottom: -18px;
+    }
+
+
+
+    @import url(https://fonts.googleapis.com/css?family=Lato:300,400,700);
+
+    body {
+        background: #fff;
+        color: #000;
+        font-weight: 400;
+        font-size: 1em;
+        font-family: 'Lato', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        padding-bottom: 40px;
+    }
+
+    a {
+        color: #4f4d4d;
+        text-decoration: none;
+    }
+
+    a:hover,
+    a:focus {
+        color: #000;
+    }
+
+    *,
+    *:after,
+    *:before {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    a,
+    button {
+        outline: none;
+    }
+
+    .clearfix:before,
+    .clearfix:after {
+        content: " ";
+        display: table;
+    }
+
+    .clearfix:after {
+        clear: both;
+    }
+
+    /* To Navigation Style */
+    .cctop {
+        background: #08cbd2;
+        width: 100%;
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 0.75em;
+        line-height: 3.2;
+    }
+
+    .cctop a {
+        display: inline-block;
+        padding: 0 1.5em;
+        text-decoration: none;
+        letter-spacing: 1px;
+    }
+
+    .cctop span.right {
+        float: right;
+    }
+
+    .cctop span.right a {
+        display: block;
+        float: left;
+    }
+
+    /* Header Style */
+
+    .ccheader {
+        margin: 0 auto;
+        padding: 2em;
+        text-align: center;
+    }
+
+    .ccheader h1 {
+        font-size: 2.625em;
+        font-weight: 300;
+        line-height: 1.3;
+        margin: 0;
+    }
+
+    .ccheader h1 span {
+        display: block;
+        padding: 0 0 0.6em 0.1em;
+        font-size: 60%;
+        opacity: 0.7;
+    }
+
+
+
+    /* Demo Buttons Style */
+    .codeconvey-demo {
+        padding-top: 1em;
+        font-size: 0.8em;
+    }
+
+    .codeconvey-demo a {
+        display: inline-block;
+        margin: 0.5em;
+        padding: 0.7em 1.1em;
+        outline: none;
+        border: 2px solid #fff;
+        color: #fff;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+    }
+
+    .codeconvey-demo a:hover,
+    .codeconvey-demo a.current-demo,
+    .codeconvey-demo a.current-demo:hover {
+        border-color: #333;
+        color: #333;
+    }
+
+    /* Wrapper Style */
+
+    .wrapper {
+        margin: 0 auto;
+        padding-left: 12%;
+        padding-right: 12%;
+    }
+
+    section {
+        float: left;
+        width: 100%;
+    }
+
+    .opt {
+        background: url(../images/bg.jpg) repeat-x;
+        padding: 3%;
+    }
+
+
+
+    .cctabs {
+        width: 100%;
+        margin: 50px auto;
+    }
+
+    .cctabs input[type="radio"] {
+        opacity: 0;
+    }
+
+    .cctabs .fa {
+        margin-right: 0px;
+    }
+
+    .cctabs label {
+        color: #000;
+        cursor: pointer;
+        float: left;
+        margin-right: 2px;
+        padding: 0.5% 2%;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .cctabs label:hover {
+        background: -webkit-linear-gradient(#63c7c2, #eeeeee);
+    }
+
+    .cctabs input:checked+label {
+        background: #fff;
+        color: #61b9b5;
+        border-top: solid 2px #63c7c2;
+    }
+
+    .cctabs input:nth-of-type(1):checked~.panels .panel:first-child,
+    .cctabs input:nth-of-type(2):checked~.panels .panel:nth-child(2),
+    .cctabs input:nth-of-type(3):checked~.panels .panel:nth-child(3),
+    .cctabs input:nth-of-type(4):checked~.panels .panel:last-child {
+        opacity: 1;
+        -webkit-transition: .3s;
+        position: relative;
+
+    }
+
+    .cctabs .panels {
+        float: left;
+        clear: both;
+        position: relative;
+        width: 100%;
+        background: #fff;
+    }
+
+    .cctabs .panel {
+        width: 100%;
+        opacity: 0;
+        position: absolute;
+        background: #fff;
+        padding: 4%;
+        box-sizing: border-box;
+    }
+
+    .cctabs .panel h2 {
+        margin: 0;
+        font-family: Arial;
+    }
+
+
+    .cctabs .panel i:hover {
+        color: #88d7d3;
+        font-size: 15px;
+    }
+
+    .cctabs .headline h1 {
+        font-size: 30px;
+        font-weight: bold;
+        letter-spacing: 0.6px;
+        padding-bottom: 0;
+        text-align: center;
+        text-rendering: optimizespeed;
+        margin: 10px 0;
+    }
+
+    .cctabs .headline hr {
+        background: none repeat scroll 0 0 #ebb704;
+        border: 2px solid;
+        color: #ebb704;
+        margin-bottom: 0;
+        margin-top: 0;
+        width: 30px;
+    }
+
+    .cctabs .headline .lead {
+        font-family: "Lato", sans-serif;
+        font-weight: 300;
+        line-height: 1.9;
+        margin: 5px 0;
+        text-align: center;
+    }
+
+    #map-canvas {
+        height: 366px;
+        width: 462px;
+    }
+
+
+    #cc-contact input[type="text"],
+    #cc-contact input[type="email"],
+    #cc-contact input[type="tel"],
+    #cc-contact input[type="password"],
+    #cc-contact textarea {
+        width: 100%;
+        border: 1px solid #ebb704;
+        margin: 0 0 5px;
+        padding: 10px;
+        font-family: "Lato", sans-serif;
+        font-size: 14px;
+    }
+
+    #cc-contact textarea {
+        height: 147px;
+        max-width: 100%;
+    }
+
+    #cc-contact button[type="submit"] {
+        cursor: pointer;
+        width: 100%;
+        border: none;
+        background: #ebb704;
+        color: #FFF;
+        margin: 0 0 5px;
+        padding: 10px;
+        font-size: 15px;
+    }
+
+    #cc-contact button[type="submit"]:hover {
+        background: #f4cc42;
+        -webkit-transition: background 0.3s ease-in-out;
+        -moz-transition: background 0.3s ease-in-out;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    /* GRID*/
+    .grid {
+        display: block;
+        margin-left: -10px;
+    }
+
+    .cc-text-center {
+        text-align: center;
+    }
+
+    .cc-mt-20 {
+        margin-top: 50px;
+    }
+
+    .unit-2,
+    .unit-3,
+    .unit-4 {
+        float: left;
+        border-left: 10px solid transparent;
+        box-sizing: border-box;
+        background-clip: padding-box;
+    }
+
+    .unit-1 {
+        width: 100%;
+        float: left;
+    }
+
+    .unit-2 {
+        width: 50%;
+    }
+
+    .unit-3 {
+        width: 33.3%;
+    }
+
+    .unit-4 {
+        width: 25%;
+    }
+
+    .table-with-shadow {
+        box-shadow: 0 5px 4px rgba(0, 0, 0, 0.1), 12px 0 11px rgba(0, 0, 0, 0.3)
+    }
+
+    /* Custom CSS for circular icons */
+
+    .circular-icon-container {
+        display: flex;
+
+        align-items: center;
+        /* Vertically center the icons */
+        margin-bottom: 10px;
+    }
+
+    body {
+        color: #404E67;
+        background: #F5F7FA;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .table-wrapper {
+
+        margin: 30px auto;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    }
+
+    .table-title {
+        padding-bottom: 10px;
+        margin: 0 0 10px;
+    }
+
+    .table .thead-info th {
+        background-color: #61b9b5;
+        color: #fff;
+    }
+
+    .table-title h2 {
+        margin: 6px 0 0;
+        font-size: 22px;
+    }
+
+    .table-title .add-new {
+        float: right;
+        height: 30px;
+        font-weight: bold;
+        font-size: 12px;
+        text-shadow: none;
+        min-width: 100px;
+        border-radius: 50px;
+        line-height: 13px;
+    }
+
+    .table-title .add-new i {
+        margin-right: 4px;
+    }
+
+    table.table tr th,
+    table.table tr td {
+        border-color: #e9e9e9;
+    }
+
+    table.table th i {
+        font-size: 13px;
+        margin: 0 5px;
+        cursor: pointer;
+    }
+
+    table.table th:last-child {
+        width: 100px;
+    }
+
+    table.table td a {
+        cursor: pointer;
+        display: inline-block;
+        margin: 0 5px;
+        min-width: 24px;
+    }
+
+    table.table td a.add {
+        color: #27C46B;
+    }
+
+    table.table td a.edit {
+        color: #FFC107;
+    }
+
+    table.table td a.delete {
+        color: #E34724;
+    }
+
+    table.table td i {
+        font-size: 19px;
+    }
+
+    table.table td a.add i {
+        font-size: 24px;
+        margin-right: -1px;
+        position: relative;
+        top: 3px;
+    }
+
+    table.table .form-control {
+        height: 32px;
+        line-height: 32px;
+        box-shadow: none;
+        border-radius: 2px;
+    }
+
+    table.table .form-control.error {
+        border-color: #f50000;
+    }
+
+    table.table td .add {
+        display: none;
+    }
+
+    /* Custom CSS for adjusting the modal dimensions */
+    .modal-sm {
+        max-width: 30%;
+        /* Adjust the width as needed */
+    }
+
+    /* Custom CSS for adjusting the modal content height */
+    .modal-custom-height {
+        max-height: 40vh;
+        /* Adjust the height as needed */
+        /* Add scrollbars if content exceeds the height */
+    }
+
+    .table th,
+    .table td {
+        border-color: #c9c9c9;
+        padding: 2px 12px;
+    }
+</style>
+
+
+
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="wrapper">
+                    <div class="cctabs">
+                        <input checked id="one" name="tabs" type="radio">
+                        <label for="one"><i class="fa fa-folder"></i> Category</label>
+                        <input id="two" name="tabs" type="radio" value="Two">
+                        <label for="two"><i class="fa fa-list"></i> Sub Category</label>
+                        <input id="three" name="tabs" type="radio">
+                        <label for="three"><i class="fa fa-check"></i> Approval Matrix</label>
+                        <br>
+                        <div class="panels">
+
+                            <div class="panel">
+                                <!-- Category Form -->
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="table-responsive">
+                                        <div class="table-title">
+                                            <div class="row">
+                                                <div class="col-sm-8">
+                                                    <h4>Category</h4>
+                                                </div>
+                                                <div class="col-sm-4" data-bs-toggle="modal"
+                                                    data-bs-target="#CategoryModel">
+                                                    <a href="#" style="padding: 3%;" class="btn btn-primary add-new">
+                                                        <i style="color: #fff;" class="fa fa-plus"></i> Add New
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <table class="table table-bordered">
+                                            <thead class="thead-info">
+
+                                                <tr>
+                                                    <th>Category</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for category in categories %}
+                                                <tr>
+                                                    <td>
+                                                        <span class="editable"
+                                                            data-url="{% url 'update_category' category.id %}"
+                                                            data-field="name">{{ category.name }}</span>
+                                                    </td>
+                                                    <td>
+                                                        <a class="edit" title="Edit" data-toggle="tooltip"
+                                                            data-category-id="{{ category.id }}"
+                                                            data-category-name="{{ category.name }}"><i
+                                                                style="color: #61b9b5;"
+                                                                class="material-icons">&#xE254;</i></a>
+                                                        <!-- Delete button -->
+                                                       
+                                                        <a href="{% url 'delete_catagory' category.id %}"
+                                                            class="btn btn-danger shadow btn-xs sharp ticket_delete-btn"
+                                                            data-ticket-id="{{ category.id }}">
+                                                            <i class="fa fa-trash"></i> <!-- Delete button -->
+                                                        </a>
+
+
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+
+
+                                            </tbody>
+                                        </table>
+                                        <div class="pagination">
+                                            <span class="step-links">
+                                                {% if categories.has_previous %}
+                                                <a href="?page=1" class="btn-pagination">&laquo; First</a>
+                                                <a href="?page={{ categories.previous_page_number }}"
+                                                    class="btn-pagination">Previous</a>
+                                                {% endif %}
+
+                                                <span class="current-page">{{ categories.number }}</span>
+
+                                                {% if categories.has_next %}
+                                                <a href="?page={{ categories.next_page_number }}"
+                                                    class="btn-pagination">Next</a>
+                                                <a href="?page={{ categories.paginator.num_pages }}"
+                                                    class="btn-pagination">Last &raquo;</a>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </form>
+                                <div class="cc-mt-20"></div>
+                                <div class="grid cc-text-center">
+                                    <!-- Additional content for the first tab -->
+                                </div>
+
+                            </div>
+
+                            <div class="panel">
+                                <!-- subCategory Form -->
+                                <form method="post" action="{% url 'create_subcategory' %}">
+                                    {% csrf_token %}
+                                    <div class="table-responsive">
+                                        <div class="table-title">
+                                            <div class="row">
+                                                <div class="col-sm-8">
+                                                    <h4>Subcategory</h4>
+                                                </div>
+                                                <div class="col-sm-4" data-bs-toggle="modal"
+                                                    data-bs-target="#SubcategoryModel">
+                                                    <a href="#" style="padding: 3%;" class="btn btn-primary add-new">
+                                                        <i style="color: #fff;" class="fa fa-plus"></i> Add New
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <table class="table table-bordered">
+                                            <thead class="thead-info">
+                                                <tr>
+                                                    <th scope="col">Category</th>
+                                                    <th scope="col">SubCategory</th>
+                                                    <th scope="col">Technically</th>
+                                                    <th scope="col">Functionality</th>
+                                                    <th scope="col">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for categorys in subcategories %}
+                                                <tr>
+                                                    <td>{{ categorys.category }}</td>
+                                                    <td>{{ categorys.name }}</td>
+                                                    <td>{{ categorys.technically }}</td>
+                                                    <td>{{ categorys.functionality }}</td>
+                                                    <td style="display: inline-flex;">
+                                                        <a class="edit" title="Edit" data-bs-toggle="tooltip"
+                                                           data-category-id="{{ categorys.id }}"
+                                                           data-category-name="{{ categorys.name }}"
+                                                           data-category-functionality="{{ categorys.functionality }}"
+                                                           data-category-technically="{{ categorys.technically }}"
+                                                           data-category-category="{{ categorys.category.id }}">
+                                                            <i style="color: #61b9b5;" class="material-icons" data-bs-toggle="modal" data-target="#EditSubcategoryModel">&#xE254;</i>
+                                                        </a>
+                                                        <a href="#" class="btn btn-danger shadow btn-xs sharp tickets_delete-btn" data-ticket-id="{{ categorys.id }}">
+                                                            <i class="fa fa-trash"></i> <!-- Delete button -->
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        <div class="pagination">
+                                            <span class="step-links">
+                                                {% if categories.has_previous %}
+                                                <a href="?page=1" class="btn-pagination">&laquo; First</a>
+                                                <a href="?page={{ categories.previous_page_number }}"
+                                                    class="btn-pagination">Previous</a>
+                                                {% endif %}
+                                                <span class="current-page">{{ categories.number }}</span>
+                                                {% if categories.has_next %}
+                                                <a href="?page={{ categories.next_page_number }}"
+                                                    class="btn-pagination">Next</a>
+                                                <a href="?page={{ categories.paginator.num_pages }}"
+                                                    class="btn-pagination">Last &raquo;</a>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="cc-mt-20"></div>
+                                <div class="grid cc-text-center">
+                                    <!-- Additional content for the first tab -->
+                                </div>
+                            </div>
+
+                            <div class="panel">
+                                <div class="table-responsive">
+                                    <div class="table-title">
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <h4>Approval</h4>
+                                            </div>
+                                            <div class="col-sm-4" data-bs-toggle="modal"
+                                                data-bs-target="#ApprovalModel">
+                                                <!--<a href="#" style="padding: 3%;" class="btn btn-primary add-new">
+                                                    <i style="color: #fff;" class="fa fa-plus"></i> Add New
+                                                </a>-->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <table class="table table-bordered">
+                                        <thead class="thead-dark">
+                                            <tr>
+
+                                                <th scope="col">Technically</th>
+                                                <th scope="col">Functionality</th>
+                                                <th scope="col">Approval</th>
+                                                <!--<th scope="col">Action</th>-->
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for am in approvalmatrix %}
+                                            <tr>
+                                                <td>{{ am.get_technically_display }}</td>
+                                                <td>{{ am.get_functionally_display }}</td>
+                                                <td>{{ am.approval|capfirst }}</td>
+                                                <!--<td>
+                                                   <a class="edit-approval" title="Edit"
+                                                        data-technical="{{ am.technically }}"
+                                                        data-functional="{{ am.functionally }}"
+                                                        data-approval="{{ am.approval }}"
+                                                        data-approval-id="{{ am.id }}"><i style="color: #61b9b5;"
+                                                            class="material-icons">&#xE254;</i></a>
+                                                    <a href="{% url 'delete_approval_matrix' am.id %}"
+                                                        class="btn btn-danger shadow btn-xs sharp approval_delete-btn"
+                                                        data-approval-id="{{ am.id }}">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </td>-->
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+
+
+<!-- Category Modal -->
+<div 
+    class="modal fade {% if form_has_errors %}show{% endif %}" 
+    id="CategoryModel" 
+    tabindex="-1" 
+    aria-labelledby="CategoryModelLabel" 
+    aria-hidden="{% if form_has_errors %}false{% else %}true{% endif %}" 
+    {% if form_has_errors %}style="display: block;"{% endif %}>
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CategoryModelLabel">Add Category</h5>
+                <button 
+                    type="button" 
+                    class="btn-close" 
+                    data-bs-dismiss="modal" 
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Display form errors -->
+                {% if category_form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    <ul>
+                        {% for field, errors in category_form.errors.items %}
+                            <li>
+                                {{ field|capfirst }}:
+                                {% for error in errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                <form id="addCategoryForm" method="post" action="{% url 'create_page' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">Category Name:</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="categoryName" 
+                            name="name" 
+                            value="{{ category_form.name.value|default_if_none:'' }}" 
+                            placeholder="Enter category name" 
+                            required>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-check"></i> Save
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="resetButton">
+                            <i class="fa fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script nonce="{{ csp_nonce }}" >
+    // Open the modal if there are form errors
+    document.addEventListener('DOMContentLoaded', function () {
+        const modalElement = document.getElementById('CategoryModel');
+        if (modalElement.classList.contains('show')) {
+            const bootstrapModal = new bootstrap.Modal(modalElement, { backdrop: 'static' });
+            bootstrapModal.show();
+        }
+        
+        // Reset the form when reset button is clicked
+        const resetButton = document.getElementById('resetButton');
+        const form = document.getElementById('addCategoryForm');
+        
+        resetButton.addEventListener('click', function() {
+            form.reset(); // Reset form fields
+            const alertDiv = document.querySelector('.alert');
+            if (alertDiv) {
+                alertDiv.remove(); // Remove error message if reset
+            }
+            
+            // Manually clear the value of the input field if it's not cleared properly
+            document.getElementById('categoryName').value = ''; 
+        });
+    });
+</script>
+
+
+<!-- Error Modal for Duplicate Category -->
+<!-- Error Modal for Duplicate Category -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white"> <!-- Changed bg-danger to bg-primary -->
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage" class="text-danger">
+                    <!-- Error message will be inserted here -->
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script nonce="{{ csp_nonce }}" >
+    $(document).ready(function () {
+        $(".edit").click(function () {
+            const categoryId = $(this).data("category-id");
+            const categoryName = $(this).data("category-name");
+            const categoryCell = $(this).closest("tr").find(".editable");
+    
+            // Replace the category name with an input field for editing
+            categoryCell.html(`<input type="text" class="form-control" value="${categoryName}">`);
+    
+            // Add a "Save" button
+            categoryCell.append(`<button class="btn btn-success save-edit" data-category-id="${categoryId}">Save</button>`);
+    
+            // Disable the "Edit" button
+            $(this).prop("disabled", true);
+        });
+    
+        // Handle the click event of the "Save" button
+        $(document).on("click", ".save-edit", function () {
+            const categoryId = $(this).data("category-id");
+            const newName = $(this).siblings("input").val();
+    
+            // Send an AJAX request to update the category
+            $.ajax({
+                url: `/update_category/${categoryId}/`,
+                method: "POST",
+                data: {
+                    value: newName,
+                    field: "name",
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Update the category name in the table
+                        $(`.editable[data-url="${'/update_category/' + categoryId + '/'}"]`).text(newName);
+                    } else {
+                        // If there's an error (duplicate name), show the error in the error modal
+                        if (response.error) {
+                            $('#errorMessage').text(response.error); // Insert the error message
+                            const bootstrapModal = new bootstrap.Modal(document.getElementById('errorModal'), { backdrop: 'static' });
+                            bootstrapModal.show(); // Show the error modal
+                        }
+                    }
+                },
+                error: function () {
+                    alert("An error occurred while updating the category.");
+                },
+            });
+    
+            // Enable the "Edit" button
+            $(this).closest("tr").find(".edit").prop("disabled", false);
+    
+            // Remove the input field and "Save" button
+            $(this).siblings("input").remove();
+            $(this).remove();
+        });
+    
+        // Refresh the page when the error modal is closed
+        $('#errorModal').on('hidden.bs.modal', function () {
+            location.reload(); // Refresh the page
+        });
+    });
+    
+    
+</script>
+
+<!-- Delete Confirmation Modal for catgory -->
+<div class="modal fade" id="deleteConfirmationcategoryModal" tabindex="-1" aria-labelledby="deleteConfirmationcategoryModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationcategoryModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this Category?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script nonce="{{ csp_nonce }}" >
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll(".ticket_delete-btn");
+        const confirmDeleteButton = document.getElementById("confirmDelete");
+
+        let ticketIdToDelete = null;
+
+        deleteButtons.forEach((button) => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                ticketIdToDelete = this.getAttribute("data-ticket-id");
+                $('#deleteConfirmationcategoryModal').modal('show');
+            });
+        });
+
+        confirmDeleteButton.addEventListener("click", function () {
+            if (ticketIdToDelete !== null) {
+                window.location.href = `/delete_catagory/${ticketIdToDelete}/`;
+            }
+        });
+    });
+</script>
+
+<!-- Error Modal for Subcategory -->
+<div class="modal fade" id="SubcategoryModel" tabindex="-1" aria-labelledby="SubcategoryModelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="SubcategoryModelLabel">Add Subcategory</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Error message div (hidden by default) -->
+                <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+
+                <form id="addSubcategoryForm" method="post" action="{% url 'create_subcategory' %}">
+                    {% csrf_token %}
+                    <!-- Form fields here -->
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category:</label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="" disabled selected>Select Category</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Subcategory:</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="functionality" class="form-label">Functionality:</label>
+                        <select class="form-select" id="functionality" name="functionality" required>
+                            <option value="" disabled selected>Select Functionality</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="technically" class="form-label">Technically:</label>
+                        <select class="form-select" id="technically" name="technically" required>
+                            <option value="" disabled selected>Select Technicality</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-check"></i> Save
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            <i class="fa fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script nonce="{{ csp_nonce }}" >
+    document.addEventListener("DOMContentLoaded", function () {
+        // Handle form submission with AJAX
+        const form = document.querySelector("#addSubcategoryForm");
+        
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            // Send AJAX request to create subcategory
+            fetch(form.action, {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the modal
+                    $('#SubcategoryModel').modal('hide');
+                    
+                    // Refresh the page
+                    window.location.reload(); // This reloads the current page
+                } else if (data.error_message) {
+                    // Handle error and show the error message in the modal
+                    const errorMessageDiv = document.getElementById("error-message");
+                    errorMessageDiv.textContent = data.error_message;
+                    errorMessageDiv.style.display = "block"; // Show the error message
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+    });
+</script>
+
+
+<script nonce="{{ csp_nonce }}" >
+    document.addEventListener("DOMContentLoaded", function () {
+        const editButtons = document.querySelectorAll(".edit-approval");
+        const editForm = document.querySelector("#editApprovalForm");
+        const editApprovalMatrixIdInput = document.querySelector("#editApprovalMatrixId");
+        const editFunctionalitySelect = document.querySelector("#editFunctionality");
+        const editTechnicallySelect = document.querySelector("#editTechnically");
+        const editApprovalSelect = document.querySelector("#editApproval");
+
+        editButtons.forEach((button) => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+
+                const approvalId = this.getAttribute("data-approval-id");
+                const functionality = this.getAttribute("data-functionality");
+                const technically = this.getAttribute("data-technically");
+                const approval = this.getAttribute("data-approval");
+
+                editApprovalMatrixIdInput.value = approvalId;
+
+                // Set the selected value for each dropdown
+                editFunctionalitySelect.value = functionality;
+                editTechnicallySelect.value = technically;
+                editApprovalSelect.value = approval;
+
+                // Ensure values are set correctly
+                console.log('Functionality:', functionality);
+                console.log('Technically:', technically);
+                console.log('Approval:', approval);
+
+                // Show the modal
+                $("#editApprovalModal").modal("show");
+            });
+        });
+
+        // Update the action URL when the modal is shown
+        $("#editApprovalModal").on("show.bs.modal", function (event) {
+            editForm.action = `/edit_approval_matrix/${editApprovalMatrixIdInput.value}/`;
+        });
+    });
+</script>
+
+<!-- Edit Subcategory Modal -->
+<div class="modal fade" id="EditSubcategoryModel" tabindex="-1" aria-labelledby="EditSubcategoryModelLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="EditSubcategoryModelLabel">Edit Subcategory</h5>
+            </div>
+            <div class="modal-body">
+                <form id="editSubcategoryForm" method="post" action="{% url 'edit_subcategory' %}">
+                    {% csrf_token %}
+                    <input type="hidden" id="editSubcategoryId" name="subcategory_id">
+                    <div class="row mb-3">
+                        <!-- Category Dropdown -->
+                        <div class="col-md-6 mb-3">
+                            <label for="editCategory" class="form-label">Category:</label>
+                            <select class="form-select" id="editCategory" name="category" required>
+                                <option value="" disabled selected>Select Category</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Subcategory Name Input -->
+                        <div class="col-md-6 mb-3">
+                            <label for="editName" class="form-label">Subcategory:</label>
+                            <input type="text" class="form-control" id="editName" name="name" required>
+                        </div>
+                        
+                        <!-- Technically Dropdown -->
+                        <div class="col-md-6 mb-3">
+                            <label for="editTechnically" class="form-label">Technically:</label>
+                            <select class="form-select" id="editTechnically" name="technically" required>
+                                <option value="" disabled selected>Select Technically</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <!-- Functionality Dropdown -->
+                        <div class="col-md-6 mb-3">
+                            <label for="editFunctionality" class="form-label">Functionality:</label>
+                            <select class="form-select" id="editFunctionality" name="functionality" required>
+                                <option value="" disabled selected>Select Functionality</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fa fa-check"></i> Save
+                        </button>
+                        <button type="close" class="btn btn-sm btn-secondary">
+                            <span style="font-size: 12px;"><i class="fa fa-close"></i>&nbsp;Close</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ... Subcategory Deletion ... -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this Subcategory?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger confirm-delete-btn" data-action="deleteSubcategory">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script nonce="{{ csp_nonce }}" >
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll(".tickets_delete-btn");
+        const confirmDeleteButtons = document.querySelectorAll(".confirm-delete-btn");
+        let subcategoryIdToDelete = null;
+    
+        deleteButtons.forEach((button) => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                // Store the ID of the subcategory to delete
+                subcategoryIdToDelete = this.getAttribute("data-ticket-id");
+                console.log("Subcategory ID to delete:", subcategoryIdToDelete); // Debug log
+                $('#deleteConfirmationModal').modal('show');
+            });
+        });
+    
+        confirmDeleteButtons.forEach((button) => {
+            button.addEventListener("click", function () {
+                const action = this.getAttribute("data-action"); // Get the action type
+                if (subcategoryIdToDelete !== null && action === "deleteSubcategory") {
+                    console.log("Redirecting to delete:", `/delete_sub/${subcategoryIdToDelete}/`); // Debug log
+                    $('#deleteConfirmationModal').modal('hide');
+                    window.location.href = `/delete_sub/${subcategoryIdToDelete}/`; // Perform redirection
+                } else {
+                    console.error("No subcategory ID set for deletion or wrong action!");
+                }
+            });
+        });
+    });
+    
+</script>
+
+
+<!-- Approval Modal -->
+<div class="modal fade" id="ApprovalModel" tabindex="-1" aria-labelledby="ApprovalModelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ApprovalModelLabel">Approval Matrix</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addSubcategoryForm" method="post" action="{% url 'create_approval_matrix' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <!-- Technically Dropdown -->
+                        <label for="technically" class="form-label">Technically:</label>
+                        <select class="form-select" id="technically" name="technically" required>
+                            <option value="" disabled selected>Select Technicality</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <!-- Functionality Dropdown -->
+                        <label for="functionally" class="form-label">Functionality:</label>
+                        <select class="form-select" id="functionally" name="functionally" required>
+                            <option value="" disabled selected>Select Functionality</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <!-- Approval Dropdown -->
+                        <label for="approval" class="form-label">Approval:</label>
+                        <select class="form-select" id="approval" name="approval" required>
+                            <option value="" disabled selected>Select Approval</option>
+                            <option value="auto">Auto</option>
+                            <option value="manual">Manual</option>
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-check"></i> Save
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            <i class="fa fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editApprovalModal" tabindex="-1" role="dialog" aria-labelledby="editApprovalModalLabel"
+    aria-hidden="true">
+    <!-- Edit Approval Matrix Modal -->
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editApprovalModalLabel">Edit Approval Matrix</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editApprovalForm" method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" id="editApprovalMatrixId" name="approval_id" value="">
+                    <div class="row mb-3">
+                        <!-- Technically Dropdown -->
+                        <div class="col-md-4 mb-3">
+                            <label for="editTechnically" class="form-label">Technically:</label>
+                            <select class="form-select" id="editTechnically" name="technically" required>
+                                <option value="" disabled selected>Select Technically</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <!-- Functionality Dropdown -->
+                        <div class="col-md-4 mb-3">
+                            <label for="editFunctionality" class="form-label">Functionality:</label>
+                            <select class="form-select" id="editFunctionality" name="functionality" required>
+                                <option value="" disabled selected>Select Functionality</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <!-- Approval Dropdown -->
+                        <div class="col-md-4 mb-3">
+                            <label for="editApproval" class="form-label">Approval:</label>
+                            <select class="form-select" id="editApproval" name="approval" required>
+                                <option value="" disabled selected>Select Approval</option>
+                                <option value="auto">Auto</option>
+                                <option value="manual">Manual</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fa fa-check"></i> Save
+                        </button>
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script nonce="{{ csp_nonce }}" >
+    document.addEventListener("DOMContentLoaded", function () {
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    
+        // Initialize modals manually
+        var editButtons = document.querySelectorAll('.edit');
+        editButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                var modal = new bootstrap.Modal(document.getElementById("EditSubcategoryModel"));
+                document.getElementById("editSubcategoryId").value = button.getAttribute("data-category-id");
+                document.getElementById("editCategory").value = button.getAttribute("data-category-category");
+                document.getElementById("editName").value = button.getAttribute("data-category-name");
+                document.getElementById("editFunctionality").value = button.getAttribute("data-category-functionality");
+                document.getElementById("editTechnically").value = button.getAttribute("data-category-technically");
+    
+                modal.show();
+            });
+        });
+    });
+    
+</script>
+
+<div class="modal fade" id="deleteConfirmationApprovalModal" tabindex="-1" role="dialog"
+    aria-labelledby="deleteConfirmationApprovalModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="max-width: 50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationApprovalModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this approval matrix entry?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="cancelDeleteApproval"
+                    data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteApproval">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script nonce="{{ csp_nonce }}" >
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll(".approval_delete-btn");
+        const editButtons = document.querySelectorAll(".edit-approval");
+        const confirmDeleteButton = document.getElementById("confirmDeleteApproval");
+
+        let approvalIdToDelete = null;
+        let approvalIdToEdit = null;
+
+        deleteButtons.forEach((button) => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                approvalIdToDelete = this.getAttribute("data-approval-id");
+                $('#deleteConfirmationApprovalModal').modal('show');
+            });
+        });
+
+        editButtons.forEach((button) => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                approvalIdToEdit = this.getAttribute("data-approval-id");
+                const technical = this.getAttribute("data-technical");
+                const functional = this.getAttribute("data-functional");
+
+                // Populate the edit form with the values from the row
+                // You can use JavaScript to show a popup or modal for editing
+                // For simplicity, let's assume there's a modal with ID "editApprovalModal"
+                $("#editApprovalModal").modal("show");
+
+                // Populate the form fields in the modal
+                document.querySelector("#id_technically").value = technical;
+                document.querySelector("#id_functionally").value = functional;
+
+                // Set the action attribute for the form to include the approvalId
+                document.querySelector("#editApprovalForm").action = `/edit_approval_matrix/${approvalIdToEdit}/`;
+            });
+        });
+
+        const cancelDeleteButton = document.getElementById("cancelDeleteApproval");
+
+        cancelDeleteButton.addEventListener("click", function () {
+            $('#deleteConfirmationApprovalModal').modal('hide');
+        });
+
+        confirmDeleteButton.addEventListener("click", function () {
+            if (approvalIdToDelete !== null) {
+                window.location.href = `/delete_approval_matrix/${approvalIdToDelete}/`;
+            }
+        });
+    });
+
+</script>
+
+
+{% endblock %}

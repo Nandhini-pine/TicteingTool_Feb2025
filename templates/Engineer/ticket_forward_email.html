@@ -1,0 +1,90 @@
+{% load static %}
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Ticket Created</title>
+    <style>
+        /* Add custom CSS styles for coloring and layout */
+        body {
+            background-color: #f5f5f5; /* Set a background color */
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            background-color: #fff; /* Set a container background color */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px #888888;
+        }
+
+        #header {
+            background-color: #61b9b5; /* Set header background color */
+            color: #fff; /* Set text color in header */
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px 10px 0px 0px;
+        }
+
+        #footer {
+            background-color: #c1bdbd; /* Set footer background color */
+            color: #fff; /* Set text color in footer */
+            text-align: center;
+            padding: 10px;
+            border-radius: 0px 0px 10px 10px;
+        }
+
+        /* Style the Titan logo */
+        #logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 100px; /* Adjust the width as needed */
+        }
+
+        /* Add a new CSS class for light-colored and centered text */
+        .light-center {
+            color: #888; /* Set the text color to a light shade */
+            text-align: center; /* Center-align the text */
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="header">
+            <!-- <h1>New Ticket Created by {{ ticket.assignee.username|capfirst }}</h1>    -->
+            <h1>Ticket Forwarded by {{ ticket.assignee.username|capfirst }}</h1>
+        </div>
+        <p class="light-center" ><strong>Ticket Number:</strong>{{ ticket.id|dynamic_zfill:ticket.store_code }}</p>
+        <p class="light-center">
+            <strong>Ticket Status:</strong>
+            {% if ticket.status == 'open' %}
+                <span style="color: green;">Open</span>
+            {% elif ticket.status == 'pending' %}
+                <span style="color: orange;">Pending</span>
+            {% elif ticket.status == 'closed' %}
+                <span style="color: red;">Closed</span>
+            {% elif ticket.status == 'inprogress' %}
+                <span style="color: blue;">In Progress</span>
+            {% elif ticket.status == 'assigned' %}
+                <span style="color: purple;">Assigned</span>
+            {% endif %}
+        </p>
+        
+        <p class="light-center" ><strong>CFA Code:</strong>{{ ticket.store_code }}</p>
+        <p class="light-center" ><strong>Created By:</strong>{{ ticket.created_by|capfirst }}</p>
+        <p class="light-center" ><strong>Created Date:</strong>{{ ticket.created }}</p>
+        <p class="light-center"><strong>Category:</strong>{{ ticket.category }}</p>
+        <p class="light-center" ><strong>Subcategory:</strong>{{ ticket.subcategory }}</p>
+        <p class="light-center" ><strong>Short Description:</strong>{{ ticket.short_description|capfirst }}</p>
+        <p class="light-center" ><strong>Detailed Description:</strong>{{ ticket.detailed_description|capfirst }}</p>
+        <p class="light-center" ><strong>Assigned To:</strong>{{ ticket.assignee.username }}</p>
+        <p class="light-center" ><strong>Assigned Date:</strong>{{ ticket.assigned_date }}</p>
+        <p class="light-center" ><strong>Status Changed Date:</strong>{{ ticket.status_changed_date }}</p>
+        <p class="light-center" ><strong>Resolver comments:</strong>{{ ticket.resolver_comments }}</p>
+        <div id="footer">
+            <p>Copyright � Designed &amp; Developed by <a href="#" target="_blank">Pinesphere</a> 2023</p>
+        </div>
+    </div>
+</body>
+</html>

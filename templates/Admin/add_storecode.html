@@ -1,0 +1,67 @@
+{% extends 'Admin/admin_header.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-body">
+	<div class="container-fluid">
+
+		<!-- row -->
+		<div class="row">
+
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title">Add CFAcode for CFA User</h4>
+				</div>
+				<div class="card-body">
+					<div class="basic-form">
+						<form class="form-valide-with-icon needs-validation" novalidate method="post">
+							{% csrf_token %}
+							<div class="mb-3">
+								<label class="text-label form-label" for="validationCustomUsername">Username</label>
+								<div class="input-group">
+									<span class="input-group-text"> <i class="fa fa-user"></i> </span>
+									<select class="form-control" id="validationCustomUsername" name="username" required>
+										<option value="" disabled selected>Select a username...</option>
+										{% for username in usernames %}
+										<option value="{{ username }}">{{ username }}</option>
+										{% endfor %}
+									</select>
+								</div>
+								<small class="text-danger">{{ form.username.errors }}</small>
+								<!-- Display the username field error -->
+							</div>
+
+							<div class="mb-3">
+								<label class="text-label form-label" for="store_code">CFA Code <span
+										class="text-danger">*</span></label>
+								<div class="input-group transparent-append">
+									<span class="input-group-text"> <i class="fa fa-code"></i> </span>
+									<input type="text" class="form-control" id="store_code" name="store_code"
+										placeholder="Enter a CFA code.." required>
+									<div class="invalid-feedback">
+										Please enter a CFA code.
+									</div>
+								</div>
+								<small class="text-danger">{{ form.store_code.errors }}</small>
+								<!-- Display the store_code field error -->
+							</div>
+
+							<!-- Display non-field-specific form errors -->
+							{% if form.non_field_errors %}
+							<div class="alert alert-danger">
+								{{ form.non_field_errors }}
+							</div>
+							{% endif %}
+
+							<button type="submit" class="btn me-2 btn-primary">Submit</button>
+							<button type="reset" class="btn btn-light">Cancel</button>
+						</form>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,737 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="keywords" content="admin, dashboard" />
+	<meta name="author" content="DexignZone" />
+	<meta name="robots" content="index, follow" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="tixia : tixia School Admission Admin  Bootstrap 5 Template" />
+	<meta property="og:title" content="tixia : tixia School Admission Admin  Bootstrap 5 Template" />
+	<meta property="og:description" content="tixia : tixia School Admission Admin  Bootstrap 5 Template" />
+	<meta property="og:image" content="social-image.png" />
+	<meta name="format-detection" content="telephone=no">
+	<title>Titan | CFAPerson Dashboard</title>
+	<!-- Favicon icon -->
+	<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/titanlogo.png' %}">
+	<link rel="stylesheet" href="{% static 'vendor/chartist/css/chartist.min.css' %}">
+	<link href="{% static 'vendor/bootstrap-select/dist/css/bootstrap-select.min.css' %}" rel="stylesheet">
+	<link href="{% static 'vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+	<link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+	<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  integrity="sha384-KyZXEAg3QhqLMpG8r+UGf1G7pDDbGf5zGea2sxrn1SSs5n5z3W5o5F2GAwa2UstGf"
+  crossorigin="anonymous"
+/>
+
+
+<style>
+.custom-file-upload {
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+    position: relative; /* Add this to allow positioning of the input */
+}
+
+/* Style the input to be transparent and cover the button */
+#fileUpload {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.brand-logo img {
+			/* Set the maximum width for your logo */
+			max-width: 100%;
+		}
+		.brand-name {
+			color: white;
+			font-size: 30px;
+			margin-top: 9px;
+			margin-left: -11px;
+		}
+		/* styles.css */
+		.logo-container {
+			background-color: white;
+			border-radius: 117%;
+			padding: 0px;
+			display: inline-block;
+			max-width: 25%;
+			padding-top: 0px;
+		}
+
+
+
+		.logo-container img {
+
+			max-width: 90%;
+
+			display: block;
+			/* Remove any residual spacing from the image */
+
+			margin: -5px auto;
+			/* Center the image within the container */
+		}
+		.brand-name {
+			color: white;
+		}
+
+		/* Define a media query for when the sidebar is maximized */
+		@media (max-width: 1024px) {
+
+			/* Show the logo and title */
+
+			.logo-container {
+				display: block;
+				max-width: 80%;
+			}
+			p.brand-name {
+				display: none;
+			}
+			/* Optionally add styles for the logo and title when shown in the maximized sidebar */
+
+			.logo-abbr {
+				max-width: 80px;
+				/* Adjust the max-width as needed */
+			}
+		}
+
+		@media (min-width: 1024px) {
+			/* Show the logo and title */
+			.logo-container,
+			p.brand-name {
+			display: block;
+			max-width: 115%;
+			height: 92%;
+		}
+			/* Optionally add styles for the logo and title when shown in the maximized sidebar */
+			.logo {
+				max-width: 100px;
+				/* Adjust the max-width as needed */
+			}
+		}
+		/* Initially hide the logo and title */
+	.brand-name {
+			display: block;
+		}
+		/* Define a class to hide the logo and title when the sidebar is minimized */
+		.nav-header.minimized .brand-name {
+			display: none;
+		}
+
+		/* Add styles for the minimized nav-header (e.g., adjust padding) */
+		.nav-header.minimized {
+			padding: 1px;
+			/* Adjust padding as needed */
+		}
+
+		.nav-header.minimized .logo-container {
+			max-width: 58%;
+			margin-right: -10px;
+			margin-bottom: -18px;
+		}
+}
+.remove-button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        margin-left: 5px;
+        color: red;
+    }
+
+	
+	</style>
+
+</head>
+
+
+<body>
+
+	<!--*******************
+        Preloader start
+    ********************-->
+	<div id="preloader">
+		<div class="sk-three-bounce">
+			<div class="sk-child sk-bounce1"></div>
+			<div class="sk-child sk-bounce2"></div>
+			<div class="sk-child sk-bounce3"></div>
+		</div>
+	</div>
+	<!--*******************
+        Preloader end
+    ********************-->
+
+
+	<!--**********************************
+        Main wrapper start
+    ***********************************-->
+	<div id="main-wrapper">
+
+		<!--**********************************
+            Nav header start
+        ***********************************-->
+		<div class="nav-header">
+			<a href="{% url 'admin_dashboard' %}" class="brand-logo">
+				
+					<div class="logo-abbr" style="padding-bottom: 10px;">
+					<img src="{% static 'images/titan.png' %}" alt="Logo" class="logo"></div>
+				
+				<div class="brand-title">
+				<p class="brand-name">TITAN</p></div>
+			</a>
+		
+			<div class="nav-control">
+				<div class="hamburger">
+					<span class="line"></span><span class="line"></span><span class="line"></span>
+				</div>
+			</div>
+		</div>
+
+
+
+		<!--**********************************
+            Header start
+        ***********************************-->
+		<div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand">
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+                            <div class="dashboard_bar">
+                                Create Ticket
+                            </div>
+                        </div>
+
+                        <ul class="navbar-nav header-right">
+							
+							
+                            <li class="nav-item dropdown notification_dropdown">
+                                <a class="nav-link primary" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
+                                    <svg width="22" height="22" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.75 14.8385V12.0463C21.7471 9.88552 20.9385 7.80353 19.4821 6.20735C18.0258 4.61116 16.0264 3.61555 13.875 3.41516V1.625C13.875 1.39294 13.7828 1.17038 13.6187 1.00628C13.4546 0.842187 13.2321 0.75 13 0.75C12.7679 0.75 12.5454 0.842187 12.3813 1.00628C12.2172 1.17038 12.125 1.39294 12.125 1.625V3.41534C9.97361 3.61572 7.97429 4.61131 6.51794 6.20746C5.06159 7.80361 4.25291 9.88555 4.25 12.0463V14.8383C3.26257 15.0412 2.37529 15.5784 1.73774 16.3593C1.10019 17.1401 0.751339 18.1169 0.75 19.125C0.750764 19.821 1.02757 20.4882 1.51969 20.9803C2.01181 21.4724 2.67904 21.7492 3.375 21.75H8.71346C8.91521 22.738 9.45205 23.6259 10.2331 24.2636C11.0142 24.9013 11.9916 25.2497 13 25.2497C14.0084 25.2497 14.9858 24.9013 15.7669 24.2636C16.548 23.6259 17.0848 22.738 17.2865 21.75H22.625C23.321 21.7492 23.9882 21.4724 24.4803 20.9803C24.9724 20.4882 25.2492 19.821 25.25 19.125C25.2486 18.117 24.8998 17.1402 24.2622 16.3594C23.6247 15.5786 22.7374 15.0414 21.75 14.8385ZM6 12.0463C6.00232 10.2113 6.73226 8.45223 8.02974 7.15474C9.32723 5.85726 11.0863 5.12732 12.9212 5.125H13.0788C14.9137 5.12732 16.6728 5.85726 17.9703 7.15474C19.2677 8.45223 19.9977 10.2113 20 12.0463V14.75H6V12.0463ZM13 23.5C12.4589 23.4983 11.9316 23.3292 11.4905 23.0159C11.0493 22.7026 10.716 22.2604 10.5363 21.75H15.4637C15.284 22.2604 14.9507 22.7026 14.5095 23.0159C14.0684 23.3292 13.5411 23.4983 13 23.5ZM22.625 20H3.375C3.14298 19.9999 2.9205 19.9076 2.75644 19.7436C2.59237 19.5795 2.50014 19.357 2.5 19.125C2.50076 18.429 2.77757 17.7618 3.26969 17.2697C3.76181 16.7776 4.42904 16.5008 5.125 16.5H20.875C21.571 16.5008 22.2382 16.7776 22.7303 17.2697C23.2224 17.7618 23.4992 18.429 23.5 19.125C23.4999 19.357 23.4076 19.5795 23.2436 19.7436C23.0795 19.9076 22.857 19.9999 22.625 20Z" fill="#000"></path></svg>
+                                    <div class="pulse-css"></div>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <div id="DZ_W_Notification1" class="widget-media dz-scroll p-3" style="height:380px;">
+										<ul class="timeline">
+											{% for i in all_tickets %}
+											<li>
+												<div class="timeline-panel">
+													<div class="media me-2">
+														<img alt="image" width="50" src="{% static 'images/user.png' %}">
+													</div>
+													<div class="media-body">
+														<h6 class="mb-1">{{i.category}}</h6>
+														<small class="d-block">Created : {{ i.created }}</small>
+													</div>
+												</div>
+											</li>
+											{% endfor %}
+											
+										</ul>
+									</div>
+                                    <a class="all-notification" href="javascript:void(0);">See all notifications <i class="ti-arrow-right"></i></a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown header-profile">
+                                <a class="nav-link" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
+									<img src="{% static 'images/user.png' %}" width="20" alt=""/>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a href="app-profile.html" class="dropdown-item ai-icon">
+                                        <svg id="icon-user1" xmlns="http://www.w3.org/2000/svg" class="text-primary" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                        <span class="ms-2">Profile </span>
+                                    </a>
+                                    
+                                    <a href="{% url 'logout' %}" class="dropdown-item ai-icon">
+                                        <svg id="icon-logout" xmlns="http://www.w3.org/2000/svg" class="text-danger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                                        <span class="ms-2">Logout </span>
+                                    </a>
+                                </div>
+                            </li>
+							
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+		<!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+		<!--**********************************
+            Sidebar start
+        ***********************************-->
+		<div class="deznav">
+            <div class="deznav-scroll">
+				<ul class="metismenu" id="menu">
+                    <li><a href="{% url 'admin_dashboard' %}" aria-expanded="false">
+							<i class="flaticon-381-networking"></i>
+							<span class="nav-text">Dashboard</span>
+						</a>
+
+                    </li>
+					<li><a href="{% url 'create_page' %}" aria-expanded="false">
+						<i class="fa fa-exclamation-circle"></i>
+						<span class="nav-text">Issue Master</span>
+					</a>
+					</li>
+					<li><a href="#" aria-expanded="false">
+						<i class="fa fa-user"></i>
+						<span class="nav-text">Add User</span>
+					</a>
+					</li>
+					<li><a href="#" aria-expanded="false">
+						<i class="fa fa-barcode"></i>
+						<span class="nav-text">Add Storecode</span>
+					</a>
+					</li>
+					<li>
+						<a class="has-arrow ai-icon" href="javascript:void(0);" aria-expanded="false">
+							<i class="fa fa-ticket-alt"></i>
+							<span class="nav-text">Tickets<span class="badge badge-xs badge-danger ms-2">New</span></span>
+						</a>
+                        <ul aria-expanded="false">
+
+							<li><a href="{% url 'admin_all_tickets' %}">All Tickets</a></li>
+							<li><a href="{% url 'admin_reports' %}">Reports</a></li>
+
+                            <li><a href="{% url 'admin_engineer_count' %}">Engineer's Tickets</a></li>
+
+						</ul>
+                    </li>
+					
+
+				</li>
+
+			</div>
+        </div>
+		<!--**********************************
+            Sidebar end
+        ***********************************-->
+
+		<!--**********************************
+            EventList
+        ***********************************-->
+
+		<div class="event-sidebar dz-scroll" id="eventSidebar">
+			<div class="card shadow-none rounded-0 bg-transparent h-auto mb-0">
+				<div class="card-body text-center event-calender pb-2">
+					<input type='text' class="form-control d-none" id='datetimepicker1' />
+				</div>
+			</div>
+			<div class="card shadow-none rounded-0 bg-transparent h-auto">
+				<div class="card-header border-0 pb-0">
+					<h4 class="text-black">Upcoming Events</h4>
+				</div>
+				<div class="card-body">
+					<div class="media mb-5 align-items-center event-list">
+						<div class="p-3 text-center rounded me-3 date-bx bgl-primary">
+							<h2 class="mb-0 text-black">3</h2>
+							<h5 class="mb-1 text-black">Wed</h5>
+						</div>
+						<div class="media-body px-0">
+							<h6 class="mt-0 mb-3 fs-14"><a class="text-black" href="events.html">Live Concert Choir
+									Charity Event 2020</a></h6>
+							<ul class="fs-14 list-inline mb-2 d-flex justify-content-between">
+								<li>Ticket Sold</li>
+								<li>561/650</li>
+							</ul>
+							<div class="progress mb-0" style="height:4px; width:100%;">
+								<div class="progress-bar bg-warning progress-animated" style="width:85%; height:8px;"
+									role="progressbar">
+									<span class="sr-only">60% Complete</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="media mb-5 align-items-center event-list">
+						<div class="p-3 text-center rounded me-3 date-bx bgl-primary">
+							<h2 class="mb-0 text-black">16</h2>
+							<h5 class="mb-1 text-black">Tue</h5>
+						</div>
+						<div class="media-body px-0">
+							<h6 class="mt-0 mb-3 fs-14"><a class="text-black" href="events.html">Beautiful Fireworks
+									Show In The New Year Night</a></h6>
+							<ul class="fs-14 list-inline mb-2 d-flex justify-content-between">
+								<li>Ticket Sold</li>
+								<li>431/650</li>
+							</ul>
+							<div class="progress mb-0" style="height:4px; width:100%;">
+								<div class="progress-bar bg-warning progress-animated" style="width:50%; height:8px;"
+									role="progressbar">
+									<span class="sr-only">60% Complete</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="media mb-0 align-items-center event-list">
+						<div class="p-3 text-center rounded me-3 date-bx bgl-success">
+							<h2 class="mb-0 text-black">28</h2>
+							<h5 class="mb-1 text-black">Fri</h5>
+						</div>
+						<div class="media-body px-0">
+							<h6 class="mt-0 mb-3 fs-14"><a class="text-black" href="events.html">The Story Of Danau Toba
+									(Musical Drama)</a></h6>
+							<ul class="fs-14 list-inline mb-2 d-flex justify-content-between">
+								<li>Ticket Sold</li>
+								<li>650/650</li>
+							</ul>
+							<div class="progress mb-0" style="height:4px; width:100%;">
+								<div class="progress-bar bg-success progress-animated" style="width:100%; height:8px;"
+									role="progressbar">
+									<span class="sr-only">60% Complete</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card-footer justify-content-between border-0 d-flex fs-14">
+					<span>5 events more</span>
+					<a href="javascript:void(0);" class="text-primary">View more <i
+							class="las la-long-arrow-alt-right scale5 ms-2"></i></a>
+				</div>
+			</div>
+			<div class="card shadow-none rounded-0 bg-transparent h-auto mb-0">
+				<div class="card-body text-center event-calender">
+					<a href="javascript:void(0);" class="btn btn-primary btn-rounded btn-lg shadow">
+						+ New Event
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<!--**********************************
+            Content body start
+        ***********************************-->
+		<div class="content-body">
+			<div class="container-fluid">
+
+				<!-- row -->
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="card">
+							<div class="card-body">
+								<!-- -------form-validation----- -->
+								<div id="ticket-form">
+									<!-- -------form-validation----- -->
+									<form method="post" enctype="multipart/form-data">
+										{% csrf_token %}
+										<div class="form-validation">
+											<div class="needs-validation" novalidate>
+												<div class="row justify-content-center"> <!-- Center the content -->
+													<div class="col-xl-10">
+														{% if messages %}
+														<div class="alert alert-danger" role="alert">
+															<ul>
+																{% for message in messages %}
+																<li>{{ message }}</li>
+																{% endfor %}
+															</ul>
+														</div>
+														{% endif %}
+														<div class="mb-3 row">
+															<label class="col-lg-3 col-form-label" for="validationCustom05">Category <span class="text-danger">*</span></label>
+															<div class="col-lg-9">
+																<select class="form-control" id="category" name="category">
+																	<option data-display="Select">Please select</option>
+																	{% for category in categories %}
+																		<option value="{{ category.id }}">{{ category.name }}</option>
+																	{% endfor %}
+																</select>
+																<div class="invalid-feedback">
+																	Please select a category.
+																</div>
+															</div>
+														</div>
+														
+														<div class="mb-3 row">
+															<label class="col-lg-3 col-form-label" for="validationCustom05">Subcategory <span class="text-danger">*</span></label>
+															<div class="col-lg-9">
+																<select class="form-control" id="subcategory" name="subcategory">
+																	<option data-display="Select">Please select</option>
+																	{% for subcategory in subcategories %}
+																		<option value="{{ subcategory.id }}">{{ subcategory.name }}</option>
+																	{% endfor %}
+																</select>
+																<div class="invalid-feedback">
+																	Please select a subcategory.
+																</div>
+															</div>
+														</div>
+														
+														<div class="mb-3 row">
+															<label class="col-lg-3 col-form-label"
+																for="validationCustom05">Description
+																<span class="text-danger">*</span>
+															</label>
+															<div class="col-lg-9">
+																<textarea class="form-control" name="description"
+																	style="height: 200px;"
+																	placeholder="Type your Description..."></textarea>
+																<div class="invalid-feedback">
+																	Please enter the description.
+																</div>
+															</div>
+														</div>
+														 
+														<!-- Add a file input field for multiple file uploads -->
+														<!-- Add a file input field for multiple file uploads -->
+														<div class="mb-3 row">
+															<label class="col-lg-3 col-form-label" for="validationCustom05">Upload Images/Files</label>
+															<div class="col-lg-9">
+																<label for="fileUpload" id="fileUploadLabel" class="custom-file-upload">
+																	<input type="text" placeholder="Choose Files" class="form-control" id="textInput" style="width: 563px;">
+																	<span id="fileCount">0 files</span> <!-- Display selected files count here -->
+																	<input type="file" class="form-control" id="fileUpload" name="fileUpload[]" multiple onchange="validateFileSelection(event)">
+																</label>
+																<div class="invalid-feedback">
+																	Please select one or more files with supported extensions (jpg, jpeg, png, pdf, pptx, xlsx, mp3, mp4, xls).
+																</div>
+																<div id="unsupportedFileError" class="text-danger" style="display: none;">
+																	Unsupported file type. Please select a valid file.
+																</div>
+															</div>
+														</div>
+														
+														<!-- Hidden input field to store file names -->
+														<input type="hidden" id="uploadedFiles" name="uploadedFiles" value="">
+														
+														<!-- Display selected file names as clickable links with a remove option -->
+														<div class="mb-3 row">
+															<label class="col-lg-3 col-form-label" for="validationCustom06">Selected Files:</label>
+															<div class="col-lg-9">
+																<ul id="selectedFilesList"></ul>
+															</div>
+														</div>
+														
+												</div>
+											</div>
+										</div>
+										<div class="mb-3 row">
+											<div class="col-lg-5 ms-auto">
+												<button type="submit" class="btn btn-primary">Save Ticket</button>&nbsp;
+												<button type="reset" class="btn btn-danger">Reset</button>
+											</div>
+										</div>
+
+										
+									</form>
+
+								
+							</div>
+							<div id="ticket-form">
+								<!-- your form code ... -->					
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	</div>
+	</div>
+	</div>
+	<!-- -------form-validation----- -->
+
+
+	</div>
+	</div>
+	</div>
+	</div>
+
+	</div>
+	</div>
+	<!--**********************************
+            Content body end
+        ***********************************-->
+
+
+	<!--**********************************
+            Footer start
+        ***********************************-->
+		<div class="footer">
+            <div class="copyright">
+                <p>Copyright © Designed &amp; Developed by <a href="http://pinesphere.com/" target="_blank">Pinesphere</a> 2023</p>
+            </div>
+        </div>
+	<!--**********************************
+            Footer end
+        ***********************************-->
+
+	<!--**********************************
+           Support ticket button start
+        ***********************************-->
+
+	<!--**********************************
+           Support ticket button end
+        ***********************************-->
+
+
+	</div>
+	<!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+	<!--**********************************
+        Scripts
+    ***********************************-->
+
+
+	<script nonce="{{ csp_nonce }}" >
+		function updateUploadedFiles() {
+			const selectedFilesList = document.getElementById('selectedFilesList');
+			const fileLinks = selectedFilesList.querySelectorAll('a');
+			const fileNames = Array.from(fileLinks).map(link => link.textContent);
+			document.getElementById('uploadedFiles').value = fileNames.join(',');
+	
+			// Update the selected files count
+			const fileCountSpan = document.getElementById('fileCount');
+			if (fileLinks.length === 0) {
+				fileCountSpan.textContent = '0 files';
+			} else {
+				fileCountSpan.textContent = fileLinks.length + ' files';
+			}
+		}
+	
+		// Function to remove a file from the selected files list and update the hidden input field
+		function removeFile(listItem) {
+			listItem.remove();
+			updateUploadedFiles();
+		}
+	
+		document.getElementById('fileUpload').addEventListener('change', function () {
+			const fileList = this.files;
+			const selectedFilesList = document.getElementById('selectedFilesList');
+			const unsupportedFileError = document.getElementById('unsupportedFileError');
+	
+			unsupportedFileError.style.display = 'none'; // Hide the error message initially
+	
+			selectedFilesList.innerHTML = ''; // Clear the list
+	
+			for (let i = 0; i < fileList.length; i++) {
+				const fileName = fileList[i].name;
+				const fileSize = (fileList[i].size / 1024).toFixed(2) + ' KB';
+				const fileType = getFileTypeIcon(fileName);
+	
+				// Check if the file type is unsupported
+				if (!isFileTypeSupported(fileName)) {
+					unsupportedFileError.style.display = 'block'; // Show the error message
+					this.value = ''; // Clear the file input to prevent unsupported files from being uploaded
+					return; // Exit the loop
+				}
+	
+				// Create a list item for the file
+				const listItem = document.createElement('li');
+				listItem.className = 'file-list-item'; // Add a class for styling
+	
+				// Create an icon element for the file type
+				const fileIcon = document.createElement('i');
+				fileIcon.className = 'file-icon ' + fileType;
+				fileIcon.style.marginRight = '10px'; // Add spacing to the right of the icon
+	
+				// Create a link for the file
+				const fileLink = document.createElement('a');
+				fileLink.textContent = fileName;
+				fileLink.href = URL.createObjectURL(fileList[i]);
+				fileLink.target = '_blank'; // Open the link in a new tab
+	
+				// Create a span for the file size
+				const fileSizeSpan = document.createElement('span');
+				fileSizeSpan.textContent = '(' + fileSize + ')';
+				fileSizeSpan.style.marginLeft = '10px'; // Add spacing to the left of the size
+	
+				// Create a remove button (cross icon)
+				const removeButton = document.createElement('button');
+				removeButton.textContent = '×'; // Cross icon
+				removeButton.className = 'remove-button';
+				removeButton.addEventListener('click', function () {
+					// Remove the list item when the remove button is clicked
+					removeFile(listItem);
+				});
+	
+				// Append the icon, link, size span, and remove button to the list item
+				listItem.appendChild(fileIcon);
+				listItem.appendChild(fileLink);
+				listItem.appendChild(fileSizeSpan);
+				listItem.appendChild(removeButton);
+	
+				// Append the list item to the selectedFilesList
+				selectedFilesList.appendChild(listItem);
+			}
+	
+			// Update the hidden input field with the updated file names
+			updateUploadedFiles();
+		});
+	
+		// Function to check if the file type is supported
+		function isFileTypeSupported(fileName) {
+			const supportedExtensions = ["jpg", "jpeg", "png", "pdf", "pptx", "xlsx", "mp3", "mp4", "xls"];
+			const fileExtension = fileName.split('.').pop().toLowerCase();
+			return supportedExtensions.includes(fileExtension);
+		}
+	
+		// Function to get file type icon class based on file extension
+		function getFileTypeIcon(fileName) {
+			const fileExtension = fileName.split('.').pop().toLowerCase();
+			switch (fileExtension) {
+				case 'pdf':
+					return 'fas fa-file-pdf text-danger'; // PDF icon in red color
+				case 'jpg':
+				case 'jpeg':
+				case 'png':
+				case 'gif':
+					return 'fas fa-file-image text-primary'; // Image icon in blue color
+				case 'pptx':
+					return 'fas fa-file-powerpoint text-warning'; // PPTX icon in yellow color
+				case 'xls':
+				case 'xlsx':
+					return 'fas fa-file-excel text-success'; // Excel icon in green color
+				case 'mp3':
+					return 'fas fa-file-audio text-info'; // MP3 icon in info color
+				case 'mp4':
+					return 'fas fa-file-video text-secondary'; // MP4 icon in secondary color
+	
+				default:
+					return 'fas fa-file'; // Default file icon
+			}
+		}
+	</script>
+	  
+	<!-- Required vendors -->
+	<script nonce="{{ csp_nonce }}"  src="{% static 'vendor/global/global.min.js' %}"></script>
+	<script nonce="{{ csp_nonce }}"  src="{% static 'vendor/bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
+	<script nonce="{{ csp_nonce }}"  src="{% static 'vendor/chart.js/Chart.bundle.min.js' %}"></script>
+	<script nonce="{{ csp_nonce }}"  src="{% static 'vendor/bootstrap-datetimepicker/js/moment.js' %}"></script>
+	<script nonce="{{ csp_nonce }}"  src="{% static 'vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
+	<script nonce="{{ csp_nonce }}"  src="{% static 'vendor/chartist/js/chartist.min.js' %}"></script>
+
+	<!-- Apex Chart -->
+	<script nonce="{{ csp_nonce }}"  src="{% static 'vendor/apexchart/apexchart.js' %}"></script>
+	<!-- Chart piety plugin files -->
+	<script nonce="{{ csp_nonce }}"  src="{% static 'vendor/peity/jquery.peity.min.js' %}"></script>
+	<!-- Dashboard 1 -->
+	<script nonce="{{ csp_nonce }}"  src="{% static 'js/dashboard/dashboard-1.js' %}"></script>
+
+	<script nonce="{{ csp_nonce }}"  src="{% static 'js/custom.min.js' %}"></script>
+	<script nonce="{{ csp_nonce }}"  src="{% static 'js/deznav-init.js' %}"></script>
+	<script nonce="{{ csp_nonce }}"  src="{% static 'js/demo.js' %}"></script>
+	
+
+
+</body>
+
+</html>

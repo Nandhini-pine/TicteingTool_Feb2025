@@ -1,0 +1,374 @@
+{% extends 'Manager/manager_header.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+
+<div class="content-body">
+	<div class="container-fluid">
+
+		
+		<!-- row -->
+		<div class="row">
+			<div class="widget-stat card" style="background-color:#61B9B5;">
+				<a href="{% url 'manager_alltickets' %}" class="text-decoration-none">
+					<div class="card-body text-center p-2">
+						<p class="mb-1 text-white">TOTAL TICKETS</p>
+						<h3 class="text-white" style="font-size: 34px;">{{all_tickets_count}}</h3>
+					</div>
+				</a>
+			</div>
+			
+			
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'manager_alltickets' %}?status=open" class="text-decoration-none">
+
+				<div class="widget-stat card bg-warning">
+					<div class="card-body p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white">
+								<p class="mb-1">Open</p>
+								<h3 class="text-white">{{open_tickets_count}}</h3>
+								<div class="progress mb-2 bg-primary">
+									<div class="progress-bar progress-animated bg-light" style="width: {{closed_tickets_progress}}%"></div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'manager_alltickets' %}?status=seek-clarification" class="text-decoration-none">
+
+				<div class="widget-stat card bg-secondary">
+					<div class="card-body p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white">
+								<p class="mb-1">Seek Clarity</p>
+								<h3 class="text-white">{{seekclarity_tickets}}</h3>
+								<div class="progress mb-2 bg-primary">
+									<div class="progress-bar progress-animated bg-light" style="width: {{seekclarity_tickets_progress}}%"></div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'manager_alltickets' %}?status=assigned" class="text-decoration-none">
+
+				<div class="widget-stat card bg-dark">
+					<div class="card-body p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white">
+								<p class="mb-1">Assigned</p>
+								<h3 class="text-white">{{assigned_tickets}}</h3>
+								<div class="progress mb-2 bg-primary">
+									<div class="progress-bar progress-animated bg-light" style="width: {{assigned_tickets_progress}}%"></div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'manager_alltickets' %}?status=inprogress" class="text-decoration-none">
+
+				<div class="widget-stat card bg-info">
+					<div class="card-body p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white">
+								<p class="mb-1">Inprogress</p>
+								<h3 class="text-white">{{inprogress_tickets}}</h3>
+								<div class="progress mb-2 bg-primary">
+									<div class="progress-bar progress-animated bg-light" style="width: {{inprogress_tickets_progress}}%"></div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'manager_alltickets' %}?status=pending" class="text-decoration-none">
+
+				<div class="widget-stat card bg-danger ">
+					<div class="card-body p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white">
+								<p class="mb-1">Pending Tickets</p>
+								<h3 class="text-white">{{pending_tickets}}</h3>
+								<div class="progress mb-2 bg-secondary">
+									<div class="progress-bar progress-animated bg-light" style="width: {{pending_tickets_progress}}%"></div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'manager_alltickets' %}?status=reopen" class="text-decoration-none">
+
+				<div class="widget-stat card bg-warning">
+					<div class="card-body p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white">
+								<p class="mb-1">Re-Open</p>
+								<h3 class="text-white">{{reopen_tickets}}</h3>
+								<div class="progress mb-2 bg-primary">
+									<div class="progress-bar progress-animated bg-light" style="width: {{reopen_tickets_progress}}%"></div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'manager_alltickets' %}?status=Resolved" class="text-decoration-none">
+
+				<div class="widget-stat card bg-primary">
+					<div class="card-body p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white">
+								<p class="mb-1">Resolved</p>
+								<h3 class="text-white">{{resolved_tickets}}</h3>
+								<div class="progress mb-2 bg-primary">
+									<div class="progress-bar progress-animated bg-light" style="width: {{resolved_tickets_progress}}%"></div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+				<a href="{% url 'manager_alltickets' %}?status=closed" class="text-decoration-none">
+
+				<div class="widget-stat card bg-success">
+					<div class="card-body p-4">
+						<div class="media">
+							<span class="me-3">
+								<i class="flaticon-381-calendar-1"></i>
+							</span>
+							<div class="media-body text-white">
+								<p class="mb-1">Closed Tickets</p>
+								<h3 class="text-white">{{closed_tickets}}</h3>
+								<div class="progress mb-2 bg-primary">
+									<div class="progress-bar progress-animated bg-light" style="width: {{closed_tickets_progress}}%"></div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+			</div>
+			
+			<div class="col-xl-4 col-xxl-4 col-lg-12">
+				<div class="card">
+				  
+					<div class="card-body">
+						<h4 class="card-title">Ticket Status</h4><br><br><br>
+						<div class="row">
+							<div class="col-12">
+								<div class="d-flex justify-content-between">
+									<h6>{{ open_tickets_progress|floatformat:2 }}%</h6>
+									<span>OPEN TICKETS</span>
+								</div>
+								<div class="progress">
+									<div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: {{ open_tickets_progress }}%"></div>
+								</div>
+							</div>
+							<div class="col-12 mt-4">
+								<div class="d-flex justify-content-between">
+									<h6>{{ assigned_tickets_progress|floatformat:2 }}%</h6>
+									<span>ASSIGNED TICKETS</span>
+								</div>
+								<div class="progress">
+									<div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" style="width: {{ assigned_tickets_progress }}%"></div>
+								</div>
+							</div>
+							<div class="col-12 mt-4">
+								<div class="d-flex justify-content-between">
+									<h6>{{ seekclarity_tickets_progress|floatformat:2 }}%</h6>
+									<span>SEEK CLARIFICATION TICKETS</span>
+								</div>
+								<div class="progress">
+									<div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" style="width: {{ seekclarity_tickets_progress }}%"></div>
+								</div>
+							</div>
+							<div class="col-12 mt-4">
+								<div class="d-flex justify-content-between">
+									<h6>{{ inprogress_tickets_progress|floatformat:2 }}%</h6>
+									<span>INPROGRESS TICKETS</span>
+								</div>
+								<div class="progress">
+									<div class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: {{ inprogress_tickets_progress }}%"></div>
+								</div>
+							</div>
+							<div class="col-12 mt-4">
+								<div class="d-flex justify-content-between">
+									<h6>{{ pending_tickets_progress|floatformat:2 }}%</h6>
+									<span>PENDING TICKETS</span>
+								</div>
+								<div class="progress">
+									<div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style="width: {{ pending_tickets_progress }}%"></div>
+								</div>
+							</div>
+							<div class="col-12 mt-4">
+								<div class="d-flex justify-content-between">
+									<h6>{{ resolved_tickets_progress|floatformat:2 }}%</h6>
+									<span>RESOLVED TICKETS</span>
+								</div>
+								<div class="progress">
+									<div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: {{ resolved_tickets_progress }}%"></div>
+								</div>
+							</div>
+							<div class="col-12 mt-4">
+								<div class="d-flex justify-content-between">
+									<h6>{{ reopen_tickets_progress|floatformat:2 }}%</h6>
+									<span>REOPEN TICKETS</span>
+								</div>
+								<div class="progress">
+									<div class="progress-bar progress-bar-striped progress-bar-animated bg-dark" style="width: {{ reopen_tickets_progress }}%"></div>
+								</div>
+							</div>
+							<div class="col-12 mt-4">
+								<div class="d-flex justify-content-between">
+									<h6>{{ closed_tickets_progress|floatformat:2 }}%</h6>
+									<span>CLOSED TICKETS</span>
+								</div>
+								<div class="progress">
+									<div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: {{ closed_tickets_progress }}%"></div>
+								</div>
+							</div>
+							
+							
+						</div>
+					</div>
+					
+				</div>
+			</div>
+				<!-- Your HTML code as provided -->
+				<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+					<div class="card">
+						<div class="card-header">
+							<h4 class="card-title">Approval Status</h4>
+						</div>
+						<div class="card-body">
+							<div id="morris_donught" class="morris_chart_height"></div>
+							<h4 id="data-container">Data</h4>
+							<ul id="data-list"></ul>
+						</div>
+					</div>
+				</div>
+			   
+					<!-- Container to display data -->
+				
+						
+							
+						
+				</div>
+			
+			
+		
+			<div class="col-xl-12 col-lg-12 col-xxl-12 col-sm-12">
+				<div class="card">
+					<div class="card-header">
+						<h4 class="card-title">Recent Tickets</h4>
+					</div>
+					<div class="card-body">
+						<div class="table-responsive recentOrderTable">
+							<table class="table verticle-middle table-responsive-md">
+								<thead>
+									<tr>
+										<th scope="col">S.No</th>
+										<th scope="col">Category Name</th>
+										<th scope="col">Subcategory Name</th>
+										<th scope="col">Ticket no</th>
+										<th scope="col">Created At</th>
+										<th scope="col">Status Changed At</th>
+										<th scope="col">Status</th>
+										
+									</tr>
+									
+								</thead>
+								<tbody>
+									{% for i in recent_all_tickets|slice:":5" %}  {# Only the first 5 items #}
+										<tr>
+											<td>{{ forloop.counter }}</td> {# Display the index (starting from 1) #}
+											<td>{{ i.category }}</td>
+											<td>{{ i.subcategory }}</td>
+											<td>{{ i.id|dynamic_zfill:i.store_code }}</td>
+											<td>{{ i.created }}</td>
+											<td>{{ i.status_changed_date }}</td>
+											<td>
+												{% if i.status == 'open' %}
+										<span class="badge badge-danger" style="font-size: 10px;">Open</span>
+									{% elif i.status == 'inprogress' %}
+										<span class="badge badge-info" style="font-size: 10px;">In Progress</span>
+									{% elif i.status == 'pending' %}
+										<span class="badge badge-warning" style="font-size: 10px;">Pending</span>
+									{% elif i.status == 'closed' %}
+										<span class="badge badge-success" style="font-size: 10px;">Closed</span>
+									{% elif i.status == 'Assigned' %}
+									<span class="badge badge-secondary" style="font-size: 10px;">Assigned</span>
+									{% elif i.status == 'Resolved' %}
+									<span class="badge badge-primary" style="font-size: 10px;">Resolved</span>
+									{% elif i.status == 'reopen' %}
+									<span class="badge " style="font-size: 10px;background-color: #c60e82; color: white;">Re-open</span>
+									{% else %}
+									<span class="badge badge-primary" style="font-size: 10px;">{{ i.status }}</span>
+									{% endif %}
+											</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		
+	
+	
+	</div>
+
+{% endblock %}
