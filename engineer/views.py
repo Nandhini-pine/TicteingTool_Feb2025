@@ -734,6 +734,7 @@ def validate_email(email):
     import re
     email_regex = r"(^[a-z0-9]+[.-_]?[a-z0-9]+@[a-z0-9.-]+\.[a-z]{2,6}$)"
     return bool(re.match(email_regex, email))
+
 from email.mime.base import MIMEBase
 from email import encoders
 from django.db import transaction
