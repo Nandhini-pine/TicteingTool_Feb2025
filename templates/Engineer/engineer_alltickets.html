@@ -447,9 +447,10 @@
                                 </div>
                             
                                 <!-- Link to Forward Ticket (Hidden by Default) -->
-                                <div id="forward-ticket-link-{{ i.id }}" style="display: none;">
-                                    <a href="javascript:void(0);" id="emailpopup" data-id="{{ i.id }}" style="color: white; text-decoration: underline;">Forward this ticket in email</a>
-                                </div>
+                                    <div id="forward-ticket-link-{{ i.id }}" style="display: block;">
+                                        <a href="javascript:void(0);" id="emailpopup" data-id="{{ i.id }}" style="color: white; text-decoration: underline;">Forward this ticket in email</a>
+                                    </div>
+                               
                             
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-secondary">Update Status</button>
@@ -467,7 +468,8 @@
             {% csrf_token %}
             <label for="popup-email-{{ i.id }}" style="font-weight: bold; font-size: 1rem; color: #333; display: block; margin-bottom: 10px;">Recipient Email(s):</label>
             <input type="text" id="popup-email-{{ i.id }}" name="email" class="form-control" placeholder="Enter email addresses separated by commas" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%; font-size: 0.75rem; margin-bottom: 15px;">
-            
+            <input type="hidden" id="popup-resolver-comments-{{ i.id }}" name="resolver_comments">
+
             <div id="popup-email-error-{{ i.id }}" style="color: red; font-size: 0.9rem; display: none; margin-bottom: 15px;">Please enter valid email addresses, separated by commas.</div>
         
             <div class="text-end">
@@ -479,10 +481,26 @@
                 </button>
             </div>
         </form>
+
         
         
     </div>
 </div>
+<script nonce="{{ csp_nonce }}">
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[id^='email-form-']").forEach(form => {
+        form.addEventListener("submit", function (event) {
+            let ticketId = form.getAttribute("id").split("-").pop(); // Extract ticket ID
+            let resolverCommentsField = document.getElementById(`resolver_comments-${ticketId}`);
+            let hiddenResolverComments = document.getElementById(`popup-resolver-comments-${ticketId}`);
+
+            if (resolverCommentsField) {
+                hiddenResolverComments.value = resolverCommentsField.value.trim(); // Copy value before submitting
+            }
+        });
+    });
+});
+</script>
 
 
 

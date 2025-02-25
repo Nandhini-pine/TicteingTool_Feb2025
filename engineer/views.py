@@ -723,10 +723,7 @@ def get_ticket_details(request, ticket_id):
     except Item.DoesNotExist:
 
         return JsonResponse({'error': 'Ticket not found'}, status=404)
-
-
-
-
+    
 # Email configuration
 from_email = "wwdsupport_noreply@titan.co.in"
 smtp_server = 'titan-co-in.mail.protection.outlook.com'
@@ -737,118 +734,95 @@ def validate_email(email):
     import re
     email_regex = r"(^[a-z0-9]+[.-_]?[a-z0-9]+@[a-z0-9.-]+\.[a-z]{2,6}$)"
     return bool(re.match(email_regex, email))
+from email.mime.base import MIMEBase
+from email import encoders
+from django.db import transaction
 
 def forward_mail_pending(request, ticket_id):
-    print("forward_mail_pending view has been called.")  # Log when the view is called
+    print("forward_mail_pending view has been called.")
 
     if request.method == "POST":
-        print("Request method is POST.")  # Log the request method
+        print("Request method is POST.")
 
         ticket = Item.objects.get(id=ticket_id)
         email_input = request.POST.get('email')
-        print(f"Email input received: {email_input}")  # Log the received email input
+        resolver_comments = request.POST.get('resolver_comments', '').strip()
+        print(f"Email input received: {email_input}")
+        print(f"Resolver comments received: {resolver_comments}")
 
-
-        # Check if the email is valid
         if email_input:
-            # Split the email addresses by commas
             recipient_list = [email.strip() for email in email_input.split(',')]
-            print(f"Recipient list: {recipient_list}")  # Log parsed recipient emails
+            print(f"Recipient list: {recipient_list}")
 
-            # Ensure all emails are valid
             invalid_emails = [email for email in recipient_list if not validate_email(email)]
             if invalid_emails:
-                print(f"Invalid email addresses: {invalid_emails}")  # Log invalid emails
-
+                print(f"Invalid email addresses: {invalid_emails}")
                 messages.error(request, f"Invalid email address(es): {', '.join(invalid_emails)}")
                 return redirect('engineer_alltickets')
 
+            # **Use a transaction to ensure database updates are atomic**
             try:
-                subject = 'Ticket Forwarded'
-                message = (
-                    f'Ticket ID: {ticket.id}\n'
-                    f'Created By: {ticket.created_by.username}\n'
-                    f'Category: {ticket.category.name}\n'
-                    f'Subcategory: {ticket.subcategory.name}\n'
-                    f'Created On: {ticket.created_date}\n'
-                    f'Short Description: {ticket.short_description}\n'
-                    f'Detailed Description: {ticket.detailed_description}\n'
-                    f'Raised By: {ticket.store_code}\n'
-                    f'Status: {ticket.status}\n'
-                    f'Assigned To: {ticket.assignee.username}\n'   
-                    f'Assigned Date: {ticket.assigned_date}\n'
-                    f'Change Date: {ticket.status_changed_date}\n'
-                    f'Resolver Comments:{ticket.resolver_comments}\n'
-                    
-                )
-                print("Email message created.")  # Log email creation success
+                with transaction.atomic():  # Now email sending is inside the transaction
+                    # **Update ticket fields before sending email**
+                    if resolver_comments:
+                        ticket.resolver_comments = resolver_comments  
+                    ticket.status = 'pending'
+                    ticket.status_changed_date = timezone.now()  # Update status change date
+                    ticket.save()
 
-                
-        
-                
-                # Create a list of email attachments (files associated with the ticket)
-                attachment_files = ticket.uploads.all()
+                    print(f"Updated Ticket Status: {ticket.status}, Resolver Comments: {ticket.resolver_comments}")
+                    print(f"Updated Status Changed Date: {ticket.status_changed_date}")
 
-                cc_list = ["Nandhini.V@titan.co.in"]  # Add CC if needed
+                    # **Render the email template with updated details**
+                    subject = 'Ticket Forwarded'
+                    cc_list = ["Nandhini.V@titan.co.in"]  # CC list
 
-                # Render the HTML content from the template
-                html_message = render_to_string('Engineer/ticket_forward_email.html', {'ticket': ticket})
+                    html_message = render_to_string('Engineer/ticket_forward_email.html', {
+                        'ticket': ticket,  
+                        'resolver_comments': resolver_comments if resolver_comments else "No comments provided",
+                    })
 
-                # Create the email message object
-                msg = MIMEMultipart()
-                msg['From'] = from_email
-                msg['To'] = ", ".join(recipient_list)  # Join recipients with commas
-                msg['Subject'] = subject
-                msg['Cc'] = ", ".join(cc_list)  # Join CC recipients with commas
-                msg.attach(MIMEText(html_message, 'html'))
-                
-                # Attach files to the email
-                for file_upload in attachment_files:
-                    file_path = file_upload.file.path
-                    file_name = file_upload.file.name
-                    print(f"Attaching file: {file_name}")
+                    # **Create the email message object**
+                    msg = MIMEMultipart()
+                    msg['From'] = from_email
+                    msg['To'] = ", ".join(recipient_list)
+                    msg['Cc'] = ", ".join(cc_list)  # Add CC recipients
+                    msg['Subject'] = subject
+                    msg.attach(MIMEText(html_message, 'html'))
 
-                    with open(file_path, 'rb') as file:
-                        part = MIMEBase('application', 'octet-stream')
-                        part.set_payload(file.read())
-                        encoders.encode_base64(part)
-                        part.add_header('Content-Disposition', f'attachment; filename={file_name}')
-                        msg.attach(part)
+                    # **Attach files to the email**
+                    attachment_files = ticket.uploads.all()
+                    for file_upload in attachment_files:
+                        file_path = file_upload.file.path
+                        file_name = file_upload.file.name
+                        print(f"Attaching file: {file_name}")
 
-                # Send the email using Titan server
-                with smtplib.SMTP(smtp_server, smtp_port) as server:
-                    server.starttls()  # Start TLS for encryption
-                    server.sendmail(from_email, recipient_list + cc_list, msg.as_string())
-                    print("Ticket Forward Email Sent Successfully")
+                        with open(file_path, 'rb') as file:
+                            part = MIMEBase('application', 'octet-stream')
+                            part.set_payload(file.read())
+                            encoders.encode_base64(part)
+                            part.add_header('Content-Disposition', f'attachment; filename={file_name}')
+                            msg.attach(part)
 
-                # Show success message
-                # Simulate sending email for debugging
-                print("Sending email to the following recipients:")
-                print(f"To: {recipient_list}, CC: ['Nandhini.V@titan.co.in']")
+                    # **Send the email including CC recipients**
+                    with smtplib.SMTP(smtp_server, smtp_port) as server:
+                        server.starttls()
+                        server.sendmail(from_email, recipient_list + cc_list, msg.as_string())  # Include CCs
+                        print("Ticket Forward Email Sent Successfully")
 
+                # If we reach here, email and DB updates are successful
                 messages.success(request, "Ticket forwarded successfully!", extra_tags='forward_mail_pending')
-                print("Email sent successfully.")  # Log success
-            except Exception as e:
-                print(f"An error occurred: {e}")  # Log any errors
-                
-                # Set the error message based on the exception
-                if 'blocked using Spamhaus' in str(e):
-                    error_message = "An error occurred while sending the email: The server is currently blocked by Spamhaus. Please try again later."
-                else:
-                    error_message = f"An error occurred while sending the email: {e}"
+                print("Email sent successfully.")
 
-                # Show the error message using messages framework
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
+                error_message = f"An error occurred while sending the email: {e}"
                 messages.error(request, error_message, extra_tags='forward_mail_pending')
-                
                 return redirect('engineer_alltickets')
 
-
         else:
-            print("No email input provided.")  # Log empty email input
-
+            print("No email input provided.")
             messages.error(request, "Please enter a valid email address.", extra_tags='forward_mail_pending')
-    
+
     return redirect('engineer_alltickets')
-
-
-
