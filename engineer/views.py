@@ -776,7 +776,7 @@ def forward_mail_pending(request, ticket_id):
 
                     # **Render the email template with updated details**
                     subject = 'Ticket Forwarded'
-                    cc_list = ["Nandhini.V@titan.co.in"]  # CC list
+                    cc_list = ["goutam_sg@titan.co.in", request.user.email]  # CC list with logged user email
 
                     html_message = render_to_string('Engineer/ticket_forward_email.html', {
                         'ticket': ticket,  
