@@ -378,14 +378,19 @@
                                                     </select>
                                                 </th>
                                                 <th>
+                                                    Assigned Date   
+                                                    <select id="filterAssignedDate" onchange="filterTable(10)">
+                                                        <option value="">All</option>
+                                                </th>
+                                                <th>
                                                     Ticket Closed Date
-                                                    <select id="filterClosedDate" onchange="filterTable(10)">
+                                                    <select id="filterClosedDate" onchange="filterTable(11)">
                                                         <option value="">All</option>
                                                     </select>
                                                 </th>
                                                 <th>
                                                     Ticket Ageing (Days)
-                                                    <select id="filterAgeingDays" onchange="filterTable(11)">
+                                                    <select id="filterAgeingDays" onchange="filterTable(12)">
                                                         <option value="">All</option>
                                                     </select>
                                                 </th>
@@ -423,7 +428,8 @@
                                                     {% endif %}
                                                 </td>
                                                 <td>{{ ticket.store_code }}</td>
-                                                <td>{{ ticket.closed_date|date:"Y-m-d"|default:"None" }}</td>
+                                                <td>{{ ticket.assigned_date|date:"Y-m-d H:i:s"|default:"None" }}</td>
+                                                <td>{{ ticket.closed_date|date:"Y-m-d H:i:s"|default:"None" }}</td>
                                                 <td>{{ ticket.ageing_days }}</td>
                                                 <td>
                                                     <div class="d-flex">
@@ -759,7 +765,7 @@
                                         "filterSNo", "filterCategory", "filterSubCategory",
                                         "filterTicketNo", "filterDate", "filterShortDesc",
                                         "filterDetailedDesc", "filterAssignee", "filterStatus",
-                                        "filterRaisedcode", "filterClosedDate", "filterAgeingDays"
+                                        "filterRaisedcode","filterAssignedDate", "filterClosedDate", "filterAgeingDays"
                                     ];
 
                                     dropdowns.forEach((dropdownId, colIndex) => {
@@ -786,7 +792,7 @@
                                 function filterTable(columnIndex) {
                                     const table = document.querySelector(".table tbody");
                                     const rows = table.querySelectorAll("tr");
-                                    const dropdown = document.getElementById(["filterSNo", "filterCategory", "filterSubCategory", "filterTicketNo", "filterDate", "filterShortDesc", "filterDetailedDesc", "filterAssignee", "filterStatus", "filterRaisedcode", "filterClosedDate", "filterAgeingDays"][columnIndex]);
+                                    const dropdown = document.getElementById(["filterSNo", "filterCategory", "filterSubCategory", "filterTicketNo", "filterDate", "filterShortDesc", "filterDetailedDesc", "filterAssignee", "filterStatus", "filterRaisedcode","filterAssignedDate", "filterClosedDate", "filterAgeingDays"][columnIndex]);
                                     const filterValue = dropdown.value.toLowerCase();
 
                                     rows.forEach(row => {

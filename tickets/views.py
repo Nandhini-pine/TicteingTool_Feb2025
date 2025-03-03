@@ -644,6 +644,8 @@ def parse_frontend_date(date_str):
         # If the date format is invalid, return None
         return None
           
+from reportlab.platypus import Spacer
+
 def export_to_pdf(request):
     authenticated_user = request.user
     statuses = request.GET.get('statuses', '').split(',')
@@ -655,31 +657,22 @@ def export_to_pdf(request):
     to_date = request.GET.get('to_date')
 
     all_tickets = Item.objects.filter(created_by=authenticated_user).order_by('-created')
-    
-    # In your filter_tickets view
+
     if from_date and to_date:
-        # Convert strings to datetime objects
         from_date = datetime.strptime(from_date, '%Y-%m-%d')
         to_date = datetime.strptime(to_date, '%Y-%m-%d')
-        # Add time component to include full last day
         to_date = to_date.replace(hour=23, minute=59, second=59, microsecond=999999)
-        
-        # Filter using the complete date range
         all_tickets = all_tickets.filter(created__range=(from_date, to_date))
 
-        # Apply status filter
-    # Apply status filter
     if statuses and statuses[0]:
         if 'resolved' not in statuses:
             all_tickets = all_tickets.filter(Q(status__in=statuses))
         else:
             all_tickets = all_tickets.filter(Q(status__in=statuses) | Q(status='Resolved'))
-       
-    # Apply ticket number filter
+
     if ticket_no:
         all_tickets = all_tickets.filter(ticket_no=ticket_no)
 
-    # Apply search query filter
     if search_query:
         all_tickets = all_tickets.filter(
             Q(id__icontains=search_query) |
@@ -688,14 +681,12 @@ def export_to_pdf(request):
             Q(subcategory__name__icontains=search_query)
         )
 
-    # Map filters to fields
     filter_fields = [
         'id', 'category__name', 'subcategory__name', 'ticket_no', 'created_date',
         'short_description', 'detailed_description', 'assignee__username', 'status', 'store_code',
         'filterclosedDate', 'filterageingDays'
     ]
 
-    # Fetch dynamic filters
     for i, filter_value in enumerate(filters):
         if filter_value:
             if i < len(filter_fields):
@@ -727,38 +718,35 @@ def export_to_pdf(request):
 
     doc = SimpleDocTemplate(response, pagesize=landscape(A4))
     elements = []
-   
+
     style = getSampleStyleSheet()['BodyText']
-    data = [
-        [Paragraph("Ticket Number", style), Paragraph("Category", style), Paragraph("Subcategory", style),
-         Paragraph("Short Description", style), Paragraph("Detailed Description", style), Paragraph("Date", style),
-         Paragraph("Status", style), Paragraph("Assigned To", style), Paragraph("Assigned Date", style),
-         Paragraph("Closed Date", style), Paragraph("Closure Comments", style)]
-    ]
+    spacer = Spacer(1, 20)
+    elements.append(spacer)
+
+    data = [[Paragraph("Ticket Number", style), Paragraph("Category", style), Paragraph("Subcategory", style),
+             Paragraph("Short Description", style), Paragraph("Detailed Description", style), Paragraph("Date", style),
+             Paragraph("Status", style), Paragraph("Raised Code", style), Paragraph("Assigned To", style),
+             Paragraph("Assigned Date", style), Paragraph("Closed Date", style), Paragraph("Ageing Days", style),
+             Paragraph("Closure Comments", style)]]
 
     for ticket in all_tickets:
-        # Localize the `created` datetime before formatting
-        localized_created = localtime(ticket.created)
-
-        # Format `created` with timezone and manually add the colon in the timezone if necessary
-        formatted_created = localized_created.strftime('%Y-%m-%d')  # Formatting date as 'YYYY-MM-DD'
-        
         data.append([
             Paragraph(dynamic_zfill(ticket.id, ticket.store_code), style),
             Paragraph(str(ticket.category), style),
             Paragraph(str(ticket.subcategory), style),
             Paragraph(ticket.short_description or '', style),
             Paragraph(ticket.detailed_description or '', style),
-            Paragraph(formatted_created, style),  # Include formatted created date
+            Paragraph(ticket.created.strftime('%Y-%m-%d %H:%M:%S'), style),
             Paragraph(ticket.status, style),
+            Paragraph(ticket.store_code, style),
             Paragraph(ticket.assignee.username if ticket.assignee else 'Unassigned', style),
             Paragraph(ticket.assigned_date.strftime('%Y-%m-%d %H:%M:%S') if ticket.assigned_date else '', style),
             Paragraph(ticket.closed_date.strftime('%Y-%m-%d %H:%M:%S') if ticket.closed_date else '', style),
+            Paragraph(str(ticket.ageing_days), style),
             Paragraph(ticket.closure_comments or '', style),
-            Paragraph(ticket.store_code, style)
         ])
 
-    table = Table(data, repeatRows=1, colWidths=[50, 50, 50, 80, 80, 60, 60, 60, 60, 60, 80])
+    table = Table(data, repeatRows=1, colWidths=[60] * 12)
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -770,6 +758,7 @@ def export_to_pdf(request):
     ]))
 
     elements.append(table)
+    elements.append(spacer)
     doc.build(elements)
     return response
 

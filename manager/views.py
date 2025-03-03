@@ -402,7 +402,10 @@ def filter_tickets(request):
 
     return JsonResponse({"tickets": tickets_data})
 
+from reportlab.platypus import Spacer
+
 def manager_export_to_pdf(request):
+    authenticated_user = request.user
     statuses = request.GET.get('statuses', '').split(',')
     search_query = request.GET.get('search_query', '')
     filters = request.GET.get('filters', '').split(',')
@@ -444,14 +447,13 @@ def manager_export_to_pdf(request):
             Q(subcategory__name__icontains=search_query)
         )
 
-    # Map filters to fields
+
     filter_fields = [
         'id', 'category__name', 'subcategory__name', 'ticket_no', 'created_date',
         'short_description', 'detailed_description', 'assignee__username', 'status', 'store_code',
         'filterclosedDate', 'filterageingDays'
     ]
 
-    # Fetch dynamic filters
     for i, filter_value in enumerate(filters):
         if filter_value:
             if i < len(filter_fields):
@@ -478,45 +480,40 @@ def manager_export_to_pdf(request):
                 else:
                     all_tickets = all_tickets.filter(**{f"{filter_fields[i]}__icontains": filter_value})
 
-
-    # Continue with generating PDF as before
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="filtered_tickets.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="ticket_data.pdf"'
 
     doc = SimpleDocTemplate(response, pagesize=landscape(A4))
     elements = []
 
     style = getSampleStyleSheet()['BodyText']
-    data = [
-        [Paragraph("Ticket Number", style), Paragraph("Category", style), Paragraph("Subcategory", style),
-         Paragraph("Short Description", style), Paragraph("Detailed Description", style), Paragraph("Date", style),
-         Paragraph("Status", style), Paragraph("Assigned To", style), Paragraph("Assigned Date", style),
-         Paragraph("Closed Date", style), Paragraph("Closure Comments", style)]
-    ]
+    spacer = Spacer(1, 20)
+    elements.append(spacer)
+
+    data = [[Paragraph("Ticket Number", style), Paragraph("Category", style), Paragraph("Subcategory", style),
+             Paragraph("Short Description", style), Paragraph("Detailed Description", style), Paragraph("Date", style),
+             Paragraph("Status", style), Paragraph("Raised Code", style), Paragraph("Assigned To", style),
+             Paragraph("Assigned Date", style), Paragraph("Closed Date", style), Paragraph("Ageing Days", style),
+             Paragraph("Closure Comments", style)]]
 
     for ticket in all_tickets:
-        # Localize the `created` datetime before formatting
-        localized_created = localtime(ticket.created)
-
-        # Format `created` with timezone and manually add the colon in the timezone if necessary
-        formatted_created = localized_created.strftime('%Y-%m-%d')  # Formatting date as 'YYYY-MM-DD'
-        
         data.append([
             Paragraph(dynamic_zfill(ticket.id, ticket.store_code), style),
             Paragraph(str(ticket.category), style),
             Paragraph(str(ticket.subcategory), style),
             Paragraph(ticket.short_description or '', style),
             Paragraph(ticket.detailed_description or '', style),
-            Paragraph(formatted_created, style),  # Include formatted created date
+            Paragraph(ticket.created.strftime('%Y-%m-%d %H:%M:%S'), style),
             Paragraph(ticket.status, style),
+            Paragraph(ticket.store_code, style),
             Paragraph(ticket.assignee.username if ticket.assignee else 'Unassigned', style),
             Paragraph(ticket.assigned_date.strftime('%Y-%m-%d %H:%M:%S') if ticket.assigned_date else '', style),
             Paragraph(ticket.closed_date.strftime('%Y-%m-%d %H:%M:%S') if ticket.closed_date else '', style),
+            Paragraph(str(ticket.ageing_days), style),
             Paragraph(ticket.closure_comments or '', style),
-            Paragraph(ticket.store_code, style)
         ])
 
-    table = Table(data, repeatRows=1, colWidths=[50, 50, 50, 80, 80, 60, 60, 60, 60, 60, 80])
+    table = Table(data, repeatRows=1, colWidths=[60] * 12)
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -528,6 +525,7 @@ def manager_export_to_pdf(request):
     ]))
 
     elements.append(table)
+    elements.append(spacer)
     doc.build(elements)
     return response
 

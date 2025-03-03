@@ -17,9 +17,11 @@
                 <th>Detailed Description</th>
                 <th>Date</th>
                 <th>Status</th>
+                <th>RaisedCode</th>
                 <th>Assigned To</th>
                 <th>Assigned Date</th>
                 <th>Closed Date</th>
+                <th>Ageing Days</th>
                 <th>Closure Comments</th>
             </tr>
         </thead>
@@ -33,9 +35,11 @@
                 <td>{{ ticket.detailed_description }}</td>
                 <td>{{ ticket.created }}</td>
                 <td>{{ ticket.status }}</td>
+                <td>{{ticket.store_code}}</td>
                 <td>{{ ticket.assignee }}</td>
                 <td>{{ ticket.assigned_date }}</td>
                 <td>{{ ticket.closed_date }}</td>
+                <td>{{ticket.ageing_days}}</td>
                 <td>{{ ticket.closure_comments }}</td>
 
 

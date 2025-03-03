@@ -550,7 +550,10 @@ def parse_frontend_date(date_str):
         # If the date format is invalid, return None
         return None
 
+from reportlab.platypus import Spacer
+
 def admin_export_to_pdf(request):
+    authenticated_user = request.user
     statuses = request.GET.get('statuses', '').split(',')
     search_query = request.GET.get('search_query', '')
     filters = request.GET.get('filters', '').split(',')
@@ -593,14 +596,12 @@ def admin_export_to_pdf(request):
             Q(subcategory__name__icontains=search_query)
         )
 
-    # Map filters to fields
     filter_fields = [
         'id', 'category__name', 'subcategory__name', 'ticket_no', 'created_date',
         'short_description', 'detailed_description', 'assignee__username', 'status', 'store_code',
         'filterclosedDate', 'filterageingDays'
     ]
 
-    # Fetch dynamic filters
     for i, filter_value in enumerate(filters):
         if filter_value:
             if i < len(filter_fields):
@@ -634,14 +635,15 @@ def admin_export_to_pdf(request):
     elements = []
 
     style = getSampleStyleSheet()['BodyText']
+    spacer = Spacer(1, 20)
+    elements.append(spacer)
 
-    data = [
-        [Paragraph("Ticket Number", style), Paragraph("Category", style), Paragraph("Subcategory", style), 
-         Paragraph("Short Description", style), Paragraph("Detailed Description", style), Paragraph("Date", style), 
-         Paragraph("Status", style), Paragraph("Assigned To", style), Paragraph("Assigned Date", style), 
-         Paragraph("Closed Date", style), Paragraph("Closure Comments", style)]
-    ]
- 
+    data = [[Paragraph("Ticket Number", style), Paragraph("Category", style), Paragraph("Subcategory", style),
+             Paragraph("Short Description", style), Paragraph("Detailed Description", style), Paragraph("Date", style),
+             Paragraph("Status", style), Paragraph("Raised Code", style), Paragraph("Assigned To", style),
+             Paragraph("Assigned Date", style), Paragraph("Closed Date", style), Paragraph("Ageing Days", style),
+             Paragraph("Closure Comments", style)]]
+
     for ticket in all_tickets:
         data.append([
             Paragraph(dynamic_zfill(ticket.id, ticket.store_code), style),
@@ -651,31 +653,30 @@ def admin_export_to_pdf(request):
             Paragraph(ticket.detailed_description or '', style),
             Paragraph(ticket.created.strftime('%Y-%m-%d %H:%M:%S'), style),
             Paragraph(ticket.status, style),
+            Paragraph(ticket.store_code, style),
             Paragraph(ticket.assignee.username if ticket.assignee else 'Unassigned', style),
             Paragraph(ticket.assigned_date.strftime('%Y-%m-%d %H:%M:%S') if ticket.assigned_date else '', style),
             Paragraph(ticket.closed_date.strftime('%Y-%m-%d %H:%M:%S') if ticket.closed_date else '', style),
-            Paragraph(ticket.closure_comments or '', style)
+            Paragraph(str(ticket.ageing_days), style),
+            Paragraph(ticket.closure_comments or '', style),
         ])
 
-    table = Table(data, repeatRows=1, colWidths=[50, 50, 50, 80, 80, 60, 60, 60, 60, 60, 80])
+    table = Table(data, repeatRows=1, colWidths=[60] * 12)
     table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.white),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 0), (-1, 0), 10),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('WORDWRAP', (0, 0), (-1, -1), 'CJK'),
-        ('VALIGN', (0, 0), (-1, -1), 'TOP')
     ]))
 
     elements.append(table)
-    elements.append(PageBreak())
+    elements.append(spacer)
     doc.build(elements)
-
     return response
+
 
 def admin_export_to_excel(request):
     statuses = request.GET.get('statuses', '').split(',')
@@ -779,7 +780,9 @@ def admin_export_to_excel(request):
             localtime(ticket.closed_date).strftime('%Y-%m-%d %H:%M:%S') if ticket.closed_date else '' 
             for ticket in all_tickets
         ],
-        'Closure Comments':[ticket.closure_comments for ticket in all_tickets],      
+        'Ticket Ageing Days': [ticket.ageing_days for ticket in all_tickets],
+
+        'Closure Comments':[ticket.closure_comments for ticket in all_tickets],    
     }
     df = pd.DataFrame(data)
 
